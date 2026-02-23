@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es-GT">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Documentación | Tech v2</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+  <style>
+    :root {
+      --primary-bg: #000000;
+      --accent-purple: #bc6ff1; /* Morado vibrante */
+      --glass-card: rgba(18, 18, 18, 0.9);
+      --text-main: #ffffff;
+      --text-dim: #a1a1aa;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    body {
+      background-color: var(--primary-bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding-bottom: 120px;
+    }
+
+    /* HEADER CON LOGO */
+    header {
+      padding: 4rem 1.5rem 2rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .logo-wrapper {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .main-logo {
+      width: 120px; /* Tamaño del logo */
+      height: auto;
+      filter: drop-shadow(0 0 10px var(--accent-purple));
+      animation: pulse-glow 3s infinite ease-in-out;
+    }
+
+    @keyframes pulse-glow {
+      0% { filter: drop-shadow(0 0 5px var(--accent-purple)); transform: scale(1); }
+      50% { filter: drop-shadow(0 0 20px var(--accent-purple)); transform: scale(1.05); }
+      100% { filter: drop-shadow(0 0 5px var(--accent-purple)); transform: scale(1); }
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* SELECTOR */
+    .selector-container {
+      width: 100%;
+      max-width: 400px;
+      position: sticky;
+      top: 20px;
+      z-index: 1000;
+      margin-bottom: 3rem;
+    }
+
+    select {
+      width: 100%;
+      padding: 1.2rem;
+      border-radius: 12px;
+      background: #121212;
+      border: 2px solid var(--accent-purple);
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+      outline: none;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    /* CONTENIDO */
+    .main-wrapper { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+    .vehicle-section {
+      margin-bottom: 6rem;
+      animation: fadeIn 0.8s ease forwards;
+      scroll-margin-top: 100px;
+    }
+
+    .info-header { text-align: center; margin-bottom: 2.5rem; }
+
+    .owner-label {
+      color: var(--accent-purple);
+      font-weight: 800;
+      font-size: 0.9rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    .plate-display {
+      background: #fbbf24;
+      color: #000;
+      padding: 0.6rem 2.5rem;
+      border-radius: 8px;
+      font-size: 2.5rem;
+      font-weight: 900;
+      border: 4px solid #000;
+      display: inline-block;
+      margin-top: 15px;
+    }
+
+    .grid-bento {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+    }
+
+    .card {
+      background: var(--glass-card);
+      border: 1px solid rgba(188, 111, 241, 0.2);
+      border-radius: 24px;
+      padding: 2rem;
+      height: 600px;
+      display: flex;
+      flex-direction: column;
+      transition: 0.4s;
+    }
+
+    .card:hover {
+      border-color: var(--accent-purple);
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(188, 111, 241, 0.1);
+    }
+
+    .img-box {
+      flex: 1;
+      background: #000;
+      border-radius: 12px;
+      margin: 1.5rem 0;
+      overflow: hidden;
+      border: 1px solid #222;
+    }
+
+    .img-box img { width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
+
+    .btn-stack { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .btn {
+      padding: 1rem; border-radius: 12px; text-decoration: none;
+      font-weight: 800; font-size: 0.8rem; text-align: center; transition: 0.3s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    .btn i { font-size: 1.1rem; }
+
+    .btn-sat { background: transparent; color: white; border: 1px solid #444; }
+    .btn-pdf { background: var(--accent-purple); color: #000; }
+    .btn:hover { filter: brightness(1.2); }
+
+    /* FOOTER */
+    footer {
+      position: fixed; bottom: 0; width: 100%;
+      background: rgba(0,0,0,0.95);
+      border-top: 1px solid var(--accent-purple);
+      padding: 1.5rem;
+      display: flex; justify-content: space-around; align-items: center;
+      backdrop-filter: blur(10px);
+      z-index: 1001;
+    }
+
+    .wa-link {
+      background: #25d366; color: white; padding: 0.8rem 1.5rem;
+      border-radius: 50px; text-decoration: none; font-weight: 800;
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    /* MODAL */
+    .modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.95);
+      display: none; z-index: 9999; justify-content: center; align-items: center;
+    }
+    .modal img { max-width: 90%; max-height: 80vh; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 600px) {
+      .grid-bento { grid-template-columns: 1fr; }
+      .card { height: 550px; }
+      .btn-stack { grid-template-columns: 1fr; } /* Apila botones en móvil para que no se vea apretado el texto */
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo-wrapper">
+      <img src="Tech-v2.png" alt="TECH V2" class="main-logo">
+    </div>
+    <h1>Gestión de Documentos de Vehículos - v1.0</h1>
+    
+    <div class="selector-container">
+      <select id="vehicleSelector" onchange="filterVehicle()">
+        <option value="all">MOSTRAR TODOS LOS VEHÍCULOS</option>
+      </select>
+    </div>
+  </header>
+
+  <main class="main-wrapper" id="content-area"></main>
+
+  <div id="v-modal" class="modal" onclick="this.style.display='none'">
+    <img id="v-modal-img" src="">
+  </div>
+
+  <footer>
+    <div style="font-size: 0.8rem;">
+      <span style="color: var(--text-dim);">Desarrollado por:</span> <br>
+      <strong style="color: var(--accent-purple);">TECH |  2026 </strong>
+    </div>
+    <a id="wa-link" href="#" target="_blank" class="wa-link">
+      <i class="bi bi-whatsapp"></i> Contáctanos
+    </a>
+  </footer>
+
+  <script>
+    const DATA = {
+      config: {
+        phone: "50241084481",
+        msg: "Hola Tech, necesito soporte con mi vehículo: "
+      },
+      vehiculos: [
+        {
+          placa: "M735HDM",
+          propietario: "Victor Estrada",
+          empresa: "TECH",
+          docs: [
+            {
+              nombre: "Tarjeta de Circulación",
+              img: "CPV-0000/TarjetaCirculacion-M735HDM.png",
+              pdf: "CPV-0000/TarjetaCirculacion-M735HDM.pdf",
+              sat: "https://farm4.sat.gob.gt/japSitio-web/certificacion/tarjetaElectronicaVehiculosQR.jsf?c2=6K2vT8Hnndg=&c3=hourkAjhL71FFv54c8k6QlaNjVWfbmZpiE2O3I%2FQFspeBPiJ4Smmv%2Bo6WWI3beh9",
+              icon: "bi-card-list"
+            },
+            {
+              nombre: "Calcomanía 2026",
+              img: "CPV-0000/Calcomania-M735HDM.png",
+              pdf: "CPV-0000/Calcomania-M735HDM.pdf",
+              sat: "https://farm2.sat.gob.gt/japSitio-web/calcomanias/calcomaniaElectronica.jsf?c2=MQOzqs37zolO0fL%3ErspCeA__",
+              icon: "bi-qr-code-scan"
+            }
+          ]
+        }
+      ]
+    };
+
+    function init() {
+      const selector = document.getElementById('vehicleSelector');
+      const contentArea = document.getElementById('content-area');
+
+      DATA.vehiculos.forEach(v => {
+        let opt = document.createElement('option');
+        opt.value = v.placa;
+        opt.textContent = `PLACA: ${v.placa} (${v.propietario})`;
+        selector.appendChild(opt);
+
+        const section = document.createElement('section');
+        section.id = `view-${v.placa}`;
+        section.className = 'vehicle-section';
+        section.innerHTML = `
+          <div class="info-header">
+            <p class="owner-label">${v.propietario} / ${v.empresa}</p>
+            <div class="plate-display">${v.placa}</div>
+          </div>
+          <div class="grid-bento">
+            ${v.docs.map(doc => `
+              <div class="card">
+                <div style="font-weight: 800; display:flex; gap:10px; align-items:center;">
+                  <i class="bi ${doc.icon}" style="color:var(--accent-purple)"></i> ${doc.nombre}
+                </div>
+                <div class="img-box" onclick="zoom('${doc.img}')">
+                  <img src="${doc.img}" alt="${doc.nombre}" onerror="this.src='https://via.placeholder.com/400x600/111111/bc6ff1?text=No+Imagen'">
+                </div>
+                <div class="btn-stack">
+                  <a href="${doc.sat}" target="_blank" class="btn btn-sat">
+                    <i class="bi bi-shield-check"></i> VALIDAR EN SAT
+                  </a>
+                  <a href="${doc.pdf}" target="_blank" class="btn btn-pdf">
+                    <i class="bi bi-file-earmark-pdf"></i> VER PDF
+                  </a>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+        contentArea.appendChild(section);
+      });
+      document.getElementById('wa-link').href = `https://wa.me/${DATA.config.phone}?text=${encodeURIComponent(DATA.config.msg)}`;
+    }
+
+    function filterVehicle() {
+      const selected = document.getElementById('vehicleSelector').value;
+      const sections = document.querySelectorAll('.vehicle-section');
+      
+      if (selected === "all") {
+        sections.forEach(s => s.style.display = 'block');
+      } else {
+        sections.forEach(s => s.style.display = 'none');
+        document.getElementById(`view-${selected}`).style.display = 'block';
+        window.scrollTo({ top: 180, behavior: 'smooth' });
+      }
+    }
+
+    function zoom(src) {
+      document.getElementById('v-modal-img').src = src;
+      document.getElementById('v-modal').style.display = 'flex';
+    }
+
+    init();
+  </script>
+</body>
+</html>
