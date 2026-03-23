@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal Documentación | Tech v2</title>
   
-  <link rel="icon" type="image/x-icon" href="img/Tech-v1.ico">
+  <link rel="icon" type="image/x-icon" href="img/Tech-v2.ico">
 
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -13,11 +13,11 @@
   <style>
     :root {
       --primary-bg: #000000;                /*ORIGINAL: #000000 */
-      --accent-purple: #BC6FF1;             /*ORIGINAL: #BC6FF1 */
+      --accent-purple: #2855b8;             /*ORIGINAL: #BC6FF1 */
       --glass-card: rgba(18, 18, 18, 0.9);  /*ORIGINAL: rbga(18, 18, 18, 0.9) */
-      --text-main: #FFFFFF;                 /*ORIGINAL: #FFFFFF */
+      --text-main: #2855b8;                 /*ORIGINAL: #FFFFFF */
       --text-dim: #a1a1aa;                  /*ORIGINAL: #A1A1AA */
-      --plate-back: #BC6FF1;                /*ORIGINAL: #FBBF24 */
+      --plate-back: #2855b8;                /*ORIGINAL: #FBBF24 */
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -53,8 +53,8 @@
     .plate-display { background: var(--plate-back); color: #000; padding: 0.6rem 2.5rem; border-radius: 8px; font-size: 2.5rem; font-weight: 900; border: 4px solid #000; display: inline-block; margin-top: 15px; }
 
     .grid-bento { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; }
-    .card { background: var(--glass-card); border: 1px solid rgba(188, 111, 241, 0.2); border-radius: 24px; padding: 2rem; height: 300px; display: flex; flex-direction: column; transition: 0.4s; }
-    .card:hover { border-color: var(--accent-purple); transform: translateY(-10px); box-shadow: 0 15px 30px rgba(188, 111, 241, 0.1); }
+    .card { background: var(--glass-card); border: 1px solid rgba(9, 22, 141, 0.2); border-radius: 24px; padding: 2rem; height: 300px; display: flex; flex-direction: column; transition: 0.4s; }
+    .card:hover { border-color: var(--accent-purple); transform: translateY(-10px); box-shadow: 0 15px 30px rgba(9, 22, 141, 0.4); }
 
     .img-box { flex: 1; background: #000; border-radius: 12px; margin: 1.5rem 0; overflow: hidden; border: 1px solid #222; }
     .img-box img { width: 100%; height: 100%; object-fit: contain; cursor: zoom-in; }
@@ -86,7 +86,7 @@
 <body>
 
   <header>
-    <div class="logo-wrapper"><img src="/img/Tech-v1.png" alt="TECH V2" class="main-logo"></div>
+    <div class="logo-wrapper"><img src="/img/Tech-v2.png" alt="TECH V2" class="main-logo"></div>
     <h1>SISTEMA DE CONSULTA | Documentos de Vehículos </h1>
     <div class="selector-container">
       <select id="vehicleSelector" onchange="filterVehicle()">
@@ -111,24 +111,66 @@
     const DATA = {
       config: { phone: "50241084481", msg: "Hola Tech, necesito soporte con mi vehículo: " },
       vehiculos: [
+
         {
-          placa: "P196KYB", propietario: "Dayanna Moir", empresa: "MIIKA",
+          placa: "M-764LBC", propietario: "Victor Estrada", empresa: "TECH",
           docs: [
             { 
               nombre: "Tarjeta de Circulación", 
-              img: "CPV-0001/TarjetaCirculacion-P196KYB.png", 
-              pdf: "CPV-0001/TarjetaCirculacion-P196KYB.pdf", 
+              img: "CPV-0001/TarjetaCirculacion-P764LBC.png", 
+              pdf: "CPV-0001/TarjetaCirculacion-P764LBC.pdf", 
               sat: "https://farm4.sat.gob.gt/japSitio-web/certificacion/tarjetaElectronicaVehiculosQR.jsf?c2=6K2vT8Hnndg=&c3=hourkAjhL71FFv54c8k6QlaNjVWfbmZpiE2O3I%2FQFspeBPiJ4Smmv%2Bo6WWI3beh9", 
               icon: "bi-card-list" },
 
             { 
               nombre: "Calcomanía", 
-              img: "CPV-0001/Calcomania-P196KYB.png", 
-              pdf: "CPV-0001/Calcomania-P196KYB.pdf", 
+              img: "CPV-0001/Calcomania-P764LBC.png", 
+              pdf: "CPV-0001/Calcomania-P764LBC.pdf", 
+              sat: "https://farm2.sat.gob.gt/japSitio-web/calcomanias/calcomaniaElectronica.jsf?c2=MQOzqs37zolO0fL%3ErspCeA___", 
+              icon: "bi-qr-code-scan" }
+          ]
+        },      
+
+
+        {
+          placa: "M-735HDM", propietario: "Victor Estrada", empresa: "TECH",
+          docs: [
+            { 
+              nombre: "Tarjeta de Circulación", 
+              img: "CPV-0001/TarjetaCirculacion-M735HDM.png", 
+              pdf: "CPV-0001/TarjetaCirculacion-M735HDM.pdf", 
+              sat: "https://farm4.sat.gob.gt/japSitio-web/certificacion/tarjetaElectronicaVehiculosQR.jsf?c2=6K2vT8Hnndg=&c3=hourkAjhL71FFv54c8k6QlaNjVWfbmZpiE2O3I%2FQFspeBPiJ4Smmv%2Bo6WWI3beh9", 
+              icon: "bi-card-list" },
+
+            { 
+              nombre: "Calcomanía", 
+              img: "CPV-0001/Calcomania-M735HDM.png", 
+              pdf: "CPV-0001/Calcomania-M735HDM.pdf", 
+              sat: "https://farm2.sat.gob.gt/japSitio-web/calcomanias/calcomaniaElectronica.jsf?c2=MQOzqs37zolO0fL%3ErspCeA___", 
+              icon: "bi-qr-code-scan" }
+          ]
+        },
+
+        {
+          placa: "P-196KYV", propietario: "Dayanna Moir", empresa: "MIIKA",
+          docs: [
+            { 
+              nombre: "Tarjeta de Circulación", 
+              img: "CPV-0001/TarjetaCirculacion-P196KYV.png", 
+              pdf: "CPV-0001/TarjetaCirculacion-P196KYV.pdf", 
+              sat: "https://farm4.sat.gob.gt/japSitio-web/certificacion/tarjetaElectronicaVehiculosQR.jsf?c2=6K2vT8Hnndg=&c3=hourkAjhL71FFv54c8k6QlaNjVWfbmZpiE2O3I%2FQFspeBPiJ4Smmv%2Bo6WWI3beh9", 
+              icon: "bi-card-list" },
+
+            { 
+              nombre: "Calcomanía", 
+              img: "CPV-0001/Calcomania-P196KYV.png", 
+              pdf: "CPV-0001/Calcomania-P196KYV.pdf", 
               sat: "https://farm2.sat.gob.gt/japSitio-web/calcomanias/calcomaniaElectronica.jsf?c2=MQOzqs37zolO0fL%3ErspCeA__", 
               icon: "bi-qr-code-scan" }
           ]
         }
+
+
       ]
     };
 
