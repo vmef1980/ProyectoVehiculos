@@ -36,11 +36,18 @@
       color: var(--text-white);
       min-height: 100vh;
       padding-top: calc(var(--header-height) + 20px);
-      padding-bottom: 110px; 
+      padding-bottom: 140px; 
       user-select: none;
       -webkit-user-select: none;
       overflow-x: hidden;
       display: none; 
+    }
+
+    /* ANIMACIÓN NEÓN / PULSACIÓN GLOW */
+    @keyframes neonGlow {
+      0% { filter: drop-shadow(0 0 6px rgba(188, 111, 241, 0.6)); }
+      50% { filter: drop-shadow(0 0 16px rgba(188, 111, 241, 0.95)) drop-shadow(0 0 30px rgba(188, 111, 241, 0.4)); }
+      100% { filter: drop-shadow(0 0 6px rgba(188, 111, 241, 0.6)); }
     }
 
     /* PANTALLA DE BLOQUEO PREMIUM */
@@ -51,60 +58,64 @@
       z-index: 99999;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      padding: 1.5rem;
+      padding: 3rem 1.5rem 1.5rem 1.5rem;
+      overflow-y: auto;
     }
 
     .pin-container {
       width: 100%;
-      max-width: 380px;
-      padding: 2rem;
+      max-width: 360px;
       text-align: center;
+      margin: auto 0;
     }
 
+    /* LOGO MÁS GRANDE Y CON EFECTO NEÓN */
     .pin-logo {
-      width: 70px;
-      margin-bottom: 2rem;
-      filter: drop-shadow(0 0 12px var(--brand-color));
+      width: 85px;
+      height: auto;
+      margin-bottom: 1.8rem;
+      animation: neonGlow 3s infinite ease-in-out;
     }
 
     .pin-container h2 {
       font-size: 1.5rem;
       font-weight: 800;
       letter-spacing: -0.5px;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.6rem;
     }
 
     .pin-container p {
       color: var(--text-gray);
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       line-height: 1.4;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
     }
 
     .pin-input-wrapper {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.2rem;
     }
 
     .pin-input-wrapper input {
       width: 100%;
-      padding: 1.2rem;
+      padding: 1.2rem 0.5rem;
       border-radius: var(--radius-lg);
       background: var(--bg-input);
       border: 1.5px solid var(--border-color);
       color: white;
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       letter-spacing: 12px;
       text-align: center;
       outline: none;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-weight: 700;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .pin-input-wrapper input:focus {
       border-color: var(--brand-color);
       box-shadow: 0 0 20px rgba(188, 111, 241, 0.15);
-      background: #000;
+      background: #050505;
     }
 
     .btn-unlock {
@@ -113,11 +124,13 @@
       border: none;
       background: var(--brand-color);
       color: #000;
-      font-weight: 700;
+      font-weight: 800;
       border-radius: var(--radius-lg);
       font-size: 1rem;
       cursor: pointer;
       transition: all 0.2s;
+      margin-bottom: 1rem;
+      letter-spacing: 0.5px;
     }
 
     .btn-unlock:active {
@@ -125,12 +138,82 @@
       filter: brightness(0.9);
     }
 
+    .btn-pin-support {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 0.95rem;
+      border-radius: var(--radius-lg);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      color: var(--text-gray);
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-pin-support i { color: #25d366; }
+    .btn-pin-support:active {
+      background: rgba(255, 255, 255, 0.08);
+      transform: scale(0.98);
+    }
+
     .pin-error {
       color: #ff4545;
       font-size: 0.85rem;
-      margin-top: 1.2rem;
+      margin-top: 1rem;
       font-weight: 600;
       display: none;
+    }
+
+    /* SECCIÓN COMERCIAL PROFESIONAL */
+    .pin-commercial-footer {
+      width: 100%;
+      max-width: 360px;
+      background: linear-gradient(180deg, rgba(20,20,22,0.4) 0%, rgba(10,10,12,0.8) 100%);
+      border: 1px solid var(--border-color);
+      padding: 1.2rem;
+      border-radius: var(--radius-xl);
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .pin-commercial-footer h3 {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--brand-color);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+    }
+
+    .pin-commercial-footer p {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+      line-height: 1.4;
+      margin-bottom: 1rem;
+    }
+
+    .btn-commercial-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 0.65rem 1.4rem;
+      background: rgba(188, 111, 241, 0.12);
+      border: 1px solid rgba(188, 111, 241, 0.25);
+      color: var(--brand-color);
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-commercial-cta:active {
+      background: rgba(188, 111, 241, 0.25);
+      transform: scale(0.95);
     }
 
     @keyframes shake {
@@ -156,10 +239,36 @@
     }
 
     .header-left { display: flex; align-items: center; gap: 12px; }
-    .main-logo { width: 38px; filter: drop-shadow(0 0 6px var(--brand-color)); }
+    
+    /* LOGO HEADER CON EFECTO NEÓN */
+    .main-logo { 
+      width: 38px; 
+      animation: neonGlow 4s infinite ease-in-out;
+    }
     h1 { font-size: 1rem; font-weight: 700; letter-spacing: -0.2px; }
 
-    /* CONTENEDOR SELECTOR MEJORADO (ZONA ACCESIBLE) */
+    .btn-logout {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-gray);
+      width: 40px;
+      height: 40px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-logout:active {
+      background: rgba(255, 69, 69, 0.1);
+      border-color: rgba(255, 69, 69, 0.2);
+      color: #ff5f5f;
+      transform: scale(0.95);
+    }
+
+    /* CONTENEDOR SELECTOR */
     .sticky-selector-bar {
       padding: 0.5rem 1.2rem 1rem 1.2rem;
       background: var(--bg-main);
@@ -170,15 +279,41 @@
       width: 100%; padding: 1rem 1.2rem; border-radius: var(--radius-md); background: var(--bg-card); 
       border: 1px solid var(--border-color); color: white; font-weight: 600; 
       font-size: 0.9rem; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none;
-      transition: border-color 0.2s;
     }
-    select:focus { border-color: var(--brand-color); }
+
+    /* BADGE LEGAL SEGURO - REUBICADO MENOS INVASIVO AL FINAL */
+    .legal-badge-container {
+      margin-top: 2rem;
+      padding: 0 0.5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .legal-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: rgba(20, 20, 22, 0.6);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 0.75rem 1.2rem;
+      border-radius: var(--radius-md);
+      font-size: 0.72rem;
+      font-weight: 500;
+      line-height: 1.4;
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+    }
+    .legal-badge strong { color: rgba(255, 255, 255, 0.6); font-weight: 600; }
+    .legal-badge i { color: var(--brand-color); font-size: 0.85rem; margin-bottom: 2px; }
 
     /* ESTRUCTURA DE CONTENIDO */
     .main-wrapper { max-width: 800px; margin: 0 auto; padding: 0 1.2rem; }
     
     .owner-group-title {
-      margin: 2rem 0 1rem 0;
+      margin: 1.5rem 0 0.8rem 0;
       font-size: 0.85rem;
       font-weight: 700;
       color: var(--text-muted);
@@ -186,7 +321,7 @@
       letter-spacing: 1.5px;
     }
 
-    /* VISTA DE VEHÍCULO COMPACTA (TIPO APP) */
+    /* VISTA DE VEHÍCULO COMPACTA */
     .vehicle-section { 
       margin-bottom: 1.5rem; 
       background: var(--bg-card); 
@@ -208,10 +343,9 @@
     .plate-display { 
       background: rgba(255, 255, 255, 0.06); color: var(--brand-color); padding: 0.4rem 1rem; border-radius: 8px; 
       font-size: 1.1rem; font-weight: 800; border: 1px solid rgba(255, 255, 255, 0.05);
-      letter-spacing: 0.5px;
     }
 
-    /* LISTA OPTIMIZADA EN LUGAR DE REJILLA GIGANTE */
+    /* LISTA OPTIMIZADA */
     .document-list { display: flex; flex-direction: column; }
     .document-item { 
       display: flex; 
@@ -235,7 +369,7 @@
     .doc-title { font-size: 0.9rem; font-weight: 600; color: var(--text-white); }
     .doc-action-hint { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
 
-    /* BOTONES DE ACCIÓN COMPACTOS Y ACCESIBLES */
+    /* BOTONES DE ACCIÓN COMPACTOS */
     .action-group { display: flex; align-items: center; gap: 8px; }
     
     .btn-circle {
@@ -249,7 +383,7 @@
 
     .btn-circle:active { transform: scale(0.92); }
 
-    /* FOOTER INTEGRADO ESTILO TAB-BAR COMPATIBLE */
+    /* FOOTER */
     footer { 
       position: fixed; bottom: 0; left: 0; right: 0;
       background: rgba(11, 11, 12, 0.85); 
@@ -264,10 +398,9 @@
       background: #25d366; color: white; padding: 0.7rem 1.2rem; border-radius: 50px; 
       text-decoration: none; font-weight: 700; font-size: 0.8rem; 
       display: flex; align-items: center; gap: 6px; 
-      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.15); 
     }
 
-    /* MODAL DE VISUALIZACIÓN ULTRA COMPLETA */
+    /* MODAL VISOR */
     .modal { 
       position: fixed; inset: 0; background: #000000; 
       display: none; z-index: 9999; flex-direction: column; 
@@ -286,7 +419,7 @@
     .rotate-btn { 
       background: #ffffff; color: #000000; border: none; padding: 1rem 2rem; 
       border-radius: 50px; font-weight: 700; cursor: pointer; display: flex; 
-      align-items: center; gap: 8px; font-size: 0.9rem; box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      align-items: center; gap: 8px; font-size: 0.9rem;
     }
     .close-v { 
       position: absolute; top: calc(1rem + env(safe-area-inset-top)); right: 1.2rem; 
@@ -304,11 +437,26 @@
       <img id="pin-logo" src="" alt="LOGO" class="pin-logo">
       <h2>Acceso Protegido</h2>
       <p>Introduce tu PIN para visualizar el expediente de documentación vehicular.</p>
+      
       <div class="pin-input-wrapper">
         <input type="password" id="pinInput" placeholder="••••" maxlength="6" inputmode="numeric" pattern="[0-9]*" onkeydown="if(event.key === 'Enter') verifyPin()">
       </div>
+      
       <button class="btn-unlock" onclick="verifyPin()">Ingresar</button>
+      
+      <a id="pin-wa-link" href="#" target="_blank" class="btn-pin-support">
+        <i class="bi bi-whatsapp"></i> Solicitar o recuperar mi PIN
+      </a>
+      
       <div id="pinError" class="pin-error">PIN incorrecto. Inténtalo de nuevo.</div>
+    </div>
+
+    <div class="pin-commercial-footer">
+      <h3>¿Deseas saber sobre nuestro productos?</h3>
+      <p>Tenemos soluciones adaptadas a las necesidades de tu negocio.</p>
+      <a id="commercial-wa-link" href="#" target="_blank" class="btn-commercial-cta">
+        <i class="bi bi-chat-left-text-fill"></i> Solicitar Información
+      </a>
     </div>
   </div>
 
@@ -317,6 +465,7 @@
       <img id="header-logo" src="" alt="LOGO" class="main-logo">
       <h1 id="portal-title"></h1>
     </div>
+    <button class="btn-logout" onclick="logout()" title="Cerrar Sesión / Volver"><i class="bi bi-box-arrow-right"></i></button>
   </header>
 
   <div class="sticky-selector-bar">
@@ -328,7 +477,17 @@
     </div>
   </div>
 
-  <main class="main-wrapper" id="content-area"></main>
+  <main class="main-wrapper">
+    <div id="content-area"></div>
+
+    <div class="legal-badge-container">
+      <div class="legal-badge">
+        <i class="bi bi-shield-lock-fill"></i>
+        <span><strong>Aviso Legal:</strong> El uso de estos documentos es responsabilidad exclusiva del cliente.</span>
+        <span>Esta información es resguardada en una nube segura que previene accesos no autorizados.</span>
+      </div>
+    </div>
+  </main>
 
   <div id="v-modal" class="modal" onclick="closeModal()">
     <span class="close-v" onclick="closeModal()"><i class="bi bi-x-lg"></i></span>
@@ -353,6 +512,7 @@
       logo: "img/Tech-v1.png",
       phone: "50241084481",
       waMsg: "Hola TECH®, solicito soporte para el ID: ",
+      waCommercialMsg: "Hola TECH®, deseo información de sus productos. Vengo de la aplicación de Gestión Documental Vehicular.",
       csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZah1DN6oRs_TNYw_dScsbpDmG9PL_hxVaVWZfzejdGTNzkaIw8BhJSBVp6ygnejLr1lRUFUGfMRSu/pub?output=csv"
     };
 
@@ -373,6 +533,13 @@
 
         const params = new URLSearchParams(window.location.search);
         globalIdURL = params.get('id');
+
+        const supportUrl = `https://wa.me/${CONFIG.phone}?text=${encodeURIComponent(CONFIG.waMsg + (globalIdURL || "Desconocido"))}`;
+        const commercialUrl = `https://wa.me/${CONFIG.phone}?text=${encodeURIComponent(CONFIG.waCommercialMsg)}`;
+        
+        if(document.getElementById('pin-wa-link')) document.getElementById('pin-wa-link').href = supportUrl;
+        if(document.getElementById('wa-link')) document.getElementById('wa-link').href = supportUrl;
+        if(document.getElementById('commercial-wa-link')) document.getElementById('commercial-wa-link').href = commercialUrl;
 
         if (!globalIdURL) {
           showErrorMessage("ID Requerido", "Por favor, utiliza un enlace con un ID de cliente válido.");
@@ -475,6 +642,11 @@
       }
     }
 
+    function logout() {
+      sessionStorage.removeItem(`auth_${globalIdURL}`);
+      window.location.reload();
+    }
+
     function showPortal() {
       renderPortal(globalStructure, globalIdURL);
     }
@@ -559,9 +731,6 @@
       if (!hasData) {
         content.innerHTML = `<div style="text-align:center; padding: 50px; color: var(--text-muted);">Sin archivos activos.</div>`;
       }
-
-      const waLink = document.getElementById('wa-link');
-      if (waLink) waLink.href = `https://wa.me/${CONFIG.phone}?text=${encodeURIComponent(CONFIG.waMsg + id)}`;
     }
 
     function filterVehicle() {
