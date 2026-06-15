@@ -29,7 +29,7 @@
       color: var(--text-white);
       min-height: 100vh;
       padding-top: calc(var(--header-height) + 140px);
-      padding-bottom: 140px;
+      padding-bottom: 140px; /* Aumentado ligeramente para la nota legal */
       user-select: none;
       -webkit-user-select: none;
       overflow-x: hidden;
@@ -37,141 +37,6 @@
       transition: background-color 0.4s ease;
     }
 
-    /* ─── PANTALLA DE PIN ─── */
-    #pin-screen {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      z-index: 99999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1.5rem;
-      padding: 2rem;
-    }
-
-    #pin-screen .pin-logo {
-      width: 72px;
-      filter: drop-shadow(0 0 12px var(--brand-color));
-      animation: pulse-neon 2.5s infinite ease-in-out;
-    }
-
-    #pin-screen h2 {
-      font-size: 1.1rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      text-align: center;
-      color: var(--text-white);
-    }
-
-    #pin-screen p {
-      font-size: 0.8rem;
-      color: var(--text-gray);
-      text-align: center;
-    }
-
-    .pin-box {
-      background: rgba(255,255,255,0.04);
-      border: 1.5px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 2rem 2.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.2rem;
-      width: 100%;
-      max-width: 360px;
-    }
-
-    .pin-dots {
-      display: flex;
-      gap: 14px;
-    }
-
-    .pin-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      border: 2px solid var(--brand-color);
-      background: transparent;
-      transition: background 0.2s;
-    }
-
-    .pin-dot.filled {
-      background: var(--brand-color);
-      box-shadow: 0 0 8px var(--brand-color);
-    }
-
-    .pin-keypad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      width: 100%;
-    }
-
-    .pin-key {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 14px;
-      color: white;
-      font-size: 1.3rem;
-      font-weight: 700;
-      padding: 1rem;
-      cursor: pointer;
-      text-align: center;
-      transition: background 0.15s, transform 0.1s;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-
-    .pin-key:active { background: var(--brand-color); color: #000; transform: scale(0.93); }
-    .pin-key.delete { font-size: 1rem; color: var(--text-gray); }
-    .pin-key.confirm { background: var(--brand-color); color: #000; font-size: 0.8rem; letter-spacing: 1px; }
-    .pin-key.confirm:active { filter: brightness(1.2); }
-
-    .pin-error {
-      font-size: 0.78rem;
-      color: #ff4d4d;
-      font-weight: 700;
-      min-height: 1.2rem;
-      text-align: center;
-      animation: shake 0.4s ease;
-    }
-
-    .pin-attempts {
-      font-size: 0.7rem;
-      color: var(--text-gray);
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-6px); }
-      40%, 80% { transform: translateX(6px); }
-    }
-
-    /* ─── BLOQUEO TEMPORAL ─── */
-    #locked-screen {
-      position: fixed;
-      inset: 0;
-      background: #000;
-      z-index: 99999;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 1rem;
-      padding: 2rem;
-      text-align: center;
-    }
-
-    #locked-screen i { font-size: 3rem; color: #ff4d4d; }
-    #locked-screen h2 { font-size: 1.1rem; font-weight: 800; }
-    #locked-screen p { font-size: 0.8rem; color: var(--text-gray); }
-    #lock-countdown { font-size: 2rem; font-weight: 900; color: var(--brand-color); }
-
-    /* ─── PORTAL ─── */
     .fixed-header {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -254,20 +119,47 @@
     .btn-pdf:hover { filter: brightness(1.1); }
 
     footer { 
-      position: fixed; bottom: 0; width: 100%; 
+      position: fixed; 
+      bottom: 0; width: 100%; 
       background: rgba(0,0,0,0.92); 
       border-top: 1px solid var(--brand-color); 
       padding: 1rem 1.3rem; 
-      display: flex; flex-direction: column; align-items: center; gap: 0.8rem;
-      backdrop-filter: blur(10px); z-index: 1001; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      gap: 0.8rem;
+      backdrop-filter: blur(10px); 
+      z-index: 1001; 
     }
 
-    .footer-content { width: 100%; display: flex; justify-content: space-around; align-items: center; }
-    .legal-notice { max-width: 800px; font-size: 0.6rem; color: var(--text-gray); text-align: center; line-height: 1.3; padding: 0 10px; }
+    .footer-content {
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    .legal-notice {
+      max-width: 800px;
+      font-size: 0.6rem;
+
+      
+      color: var(--text-gray);
+      text-align: center;
+      line-height: 1.3;
+      padding: 0 10px;
+    }
+
     .wa-link { background: #25d366; color: white; padding: 0.8rem 1.8rem; border-radius: 50px; text-decoration: none; font-weight: 800; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3); }
 
     .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: none; z-index: 9999; justify-content: center; align-items: center; flex-direction: column; }
-    #v-modal-img { max-width: 90%; max-height: 75vh; border-radius: 8px; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+    #v-modal-img { 
+      max-width: 90%; 
+      max-height: 75vh; 
+      border-radius: 8px; 
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
     .modal-controls { margin-top: 25px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
     .rotate-btn { background: var(--brand-color); color: black; border: none; padding: 12px 28px; border-radius: 40px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
     .rotate-hint { color: var(--text-gray); font-size: 0.75rem; font-style: italic; }
@@ -275,52 +167,11 @@
     .close-v:hover { opacity: 1; transform: scale(1.1); }
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-    @media (max-width: 600px) { body { padding-top: 240px; } .plate-display { font-size: 1.9rem; } .grid-bento { gap: 1.5rem; } .pin-box { padding: 1.5rem; } }
+    @media (max-width: 600px) { body { padding-top: 240px; } .plate-display { font-size: 1.9rem; } .grid-bento { gap: 1.5rem; } }
   </style>
 </head>
 <body>
 
-  <!-- ─── PANTALLA DE BLOQUEO TEMPORAL ─── -->
-  <div id="locked-screen">
-    <i class="bi bi-shield-lock-fill"></i>
-    <h2>Acceso Bloqueado</h2>
-    <p>Demasiados intentos fallidos.<br>Intenta de nuevo en:</p>
-    <div id="lock-countdown">30</div>
-    <p style="font-size:0.7rem;">segundos</p>
-  </div>
-
-  <!-- ─── PANTALLA DE PIN ─── -->
-  <div id="pin-screen">
-    <img class="pin-logo" src="img/Tech-v1.png" alt="Logo">
-    <h2>Portal Vehicular</h2>
-    <p>Ingresa tu PIN de acceso</p>
-
-    <div class="pin-box">
-      <div class="pin-dots" id="pin-dots">
-        <!-- Se generan dinámicamente según largo del PIN -->
-      </div>
-
-      <div class="pin-keypad">
-        <div class="pin-key" onclick="pinPress('1')">1</div>
-        <div class="pin-key" onclick="pinPress('2')">2</div>
-        <div class="pin-key" onclick="pinPress('3')">3</div>
-        <div class="pin-key" onclick="pinPress('4')">4</div>
-        <div class="pin-key" onclick="pinPress('5')">5</div>
-        <div class="pin-key" onclick="pinPress('6')">6</div>
-        <div class="pin-key" onclick="pinPress('7')">7</div>
-        <div class="pin-key" onclick="pinPress('8')">8</div>
-        <div class="pin-key" onclick="pinPress('9')">9</div>
-        <div class="pin-key delete" onclick="pinDelete()"><i class="bi bi-delete"></i></div>
-        <div class="pin-key" onclick="pinPress('0')">0</div>
-        <div class="pin-key confirm" onclick="pinConfirm()">OK</div>
-      </div>
-
-      <div class="pin-error" id="pin-error"></div>
-      <div class="pin-attempts" id="pin-attempts"></div>
-    </div>
-  </div>
-
-  <!-- ─── PORTAL (oculto hasta autenticar) ─── -->
   <header class="fixed-header">
     <div class="header-top">
       <img id="header-logo" src="" alt="LOGO" class="main-logo">
@@ -362,58 +213,11 @@
       logo: "img/Tech-v1.png",
       phone: "50241084481",
       waMsg: "Hola TECH®, solicito soporte para el ID: ",
-      csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZah1DN6oRs_TNYw_dScsbpDmG9PL_hxVaVWZfzejdGTNzkaIw8BhJSBVp6ygnejLr1lRUFUGfMRSu/pub?output=csv",
-      // Configuración de seguridad del PIN
-      maxAttempts: 5,       // Intentos antes de bloquear
-      lockSeconds: 30,      // Segundos de bloqueo
-      sessionHours: 8,      // Horas que dura la sesión sin pedir PIN de nuevo
+      csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZah1DN6oRs_TNYw_dScsbpDmG9PL_hxVaVWZfzejdGTNzkaIw8BhJSBVp6ygnejLr1lRUFUGfMRSu/pub?output=csv"
     };
 
-    // ─── ESTADO DE AUTENTICACIÓN ───
-    let pinCorrect = null;       // PIN real del cliente (viene del CSV)
-    let pinInput = "";           // Lo que el usuario va escribiendo
-    let clientRows = [];         // Filas del CSV de este cliente
     let currentRotation = 0;
 
-    // ─── SESIÓN LOCAL ───
-    // Guardamos en sessionStorage para que al cerrar la pestaña se pierda
-    function getSession(idURL) {
-      try {
-        const raw = sessionStorage.getItem('vp_session');
-        if (!raw) return null;
-        const s = JSON.parse(raw);
-        if (s.id !== idURL) return null;
-        // Verificar expiración
-        if (Date.now() > s.expires) {
-          sessionStorage.removeItem('vp_session');
-          return null;
-        }
-        return s;
-      } catch { return null; }
-    }
-
-    function setSession(idURL) {
-      const expires = Date.now() + (CONFIG.sessionHours * 60 * 60 * 1000);
-      sessionStorage.setItem('vp_session', JSON.stringify({ id: idURL, expires }));
-    }
-
-    // ─── CONTROL DE INTENTOS (localStorage para que persista entre recargas) ───
-    function getAttempts(idURL) {
-      try {
-        const raw = localStorage.getItem(`vp_attempts_${idURL}`);
-        return raw ? JSON.parse(raw) : { count: 0, lockedUntil: 0 };
-      } catch { return { count: 0, lockedUntil: 0 }; }
-    }
-
-    function saveAttempts(idURL, data) {
-      localStorage.setItem(`vp_attempts_${idURL}`, JSON.stringify(data));
-    }
-
-    function resetAttempts(idURL) {
-      localStorage.removeItem(`vp_attempts_${idURL}`);
-    }
-
-    // ─── INICIO ───
     async function init() {
       document.getElementById('portal-title').textContent = CONFIG.title;
       document.getElementById('header-logo').src = CONFIG.logo;
@@ -423,236 +227,48 @@
       const idURL = params.get('id');
 
       if (!idURL) {
-        showError("ID de Acceso Requerido", "Por favor, utilice un enlace válido.");
+        document.body.innerHTML = `<div style="padding:150px 20px; text-align:center;"><h2>ID de Acceso Requerido</h2><p style="color:#666">Por favor, utilice un enlace válido.</p></div>`;
+        document.body.style.display = "block";
         return;
       }
 
-      // Verificar si ya tiene sesión activa
-      if (getSession(idURL)) {
-        try {
-          const rows = await fetchCSV();
-          clientRows = rows.filter(r => r.id && r.id.trim().toUpperCase() === idURL.toUpperCase());
-          if (clientRows.length > 0) {
-            applyTheme(clientRows[0]);
-            renderPortal(buildStructure(clientRows), idURL);
-            hidePinScreen();
-            return;
-          }
-        } catch(e) { /* continuar con PIN si falla */ }
-      }
-
-      // Verificar bloqueo temporal
-      const attempts = getAttempts(idURL);
-      if (attempts.lockedUntil > Date.now()) {
-        showLockScreen(idURL, attempts.lockedUntil);
-        return;
-      }
-
-      // Cargar CSV y mostrar pantalla de PIN
       try {
-        const rows = await fetchCSV();
-        clientRows = rows.filter(r => r.id && r.id.trim().toUpperCase() === idURL.toUpperCase());
+        const response = await fetch(CONFIG.csvUrl);
+        const text = await response.text();
+        const rows = csvToJSON(text);
+        
+        const clientRows = rows.filter(r => r.id && r.id.trim().toUpperCase() === idURL.toUpperCase());
 
         if (clientRows.length === 0) {
-          showError("Acceso Denegado", `El ID "${idURL}" no está registrado.`);
+          document.body.innerHTML = `<div style="padding:150px 20px; text-align:center;"><h2>Acceso Denegado</h2><p style="color:#666">El ID "${idURL}" no está registrado.</p></div>`;
+          document.body.style.display = "block";
           return;
         }
 
-        // Extraer PIN del CSV
-        pinCorrect = (clientRows[0].pin || "").trim();
-        if (!pinCorrect) {
-          // Si no hay PIN configurado, acceso directo (compatibilidad retroactiva)
-          applyTheme(clientRows[0]);
-          renderPortal(buildStructure(clientRows), idURL);
-          hidePinScreen();
-          return;
-        }
+        const root = document.documentElement;
+        if (clientRows[0].color) root.style.setProperty('--brand-color', clientRows[0].color);
+        if (clientRows[0].fondo) root.style.setProperty('--bg-main', clientRows[0].fondo);
 
-        applyTheme(clientRows[0]);
-        showPinScreen(idURL, attempts);
-
-      } catch(e) {
-        console.error("Error cargando base de datos:", e);
-        showError("Error de Conexión", "No se pudo cargar la base de datos. Intenta de nuevo.");
-      }
-    }
-
-    // ─── SHEETS JSON API ───
-    async function fetchCSV() {
-      const SHEET_ID = "11NIj1gMdA9XgyFHguK_pK2jbxwRFuB-G3gGR0Sg8uKQ";
-      const jsonUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
-      try {
-        const res = await fetch(jsonUrl, { cache: "no-store" });
-        if (res.ok) {
-          const text = await res.text();
-          const json = JSON.parse(text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\)/)[1]);
-          return sheetsJSONtoRows(json);
-        }
-      } catch(e) {}
-      try {
-        const res = await fetch(CONFIG.csvUrl, { cache: "no-store" });
-        if (res.ok) return csvToJSON(await res.text());
-      } catch(e) {}
-      for (const proxy of [
-        `https://corsproxy.io/?${encodeURIComponent(CONFIG.csvUrl)}`,
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(CONFIG.csvUrl)}`
-      ]) {
-        try {
-          const res = await fetch(proxy, { cache: "no-store" });
-          if (res.ok) return csvToJSON(await res.text());
-        } catch(e) { continue; }
-      }
-      throw new Error("No se pudo cargar la base de datos.");
-    }
-
-    function sheetsJSONtoRows(json) {
-      const cols = json.table.cols.map(c => c.label.trim().toLowerCase());
-      return json.table.rows
-        .filter(r => r && r.c)
-        .map(r => {
-          const obj = {};
-          cols.forEach((col, i) => {
-            obj[col] = (r.c[i] && r.c[i].v !== null) ? String(r.c[i].v).trim() : "";
+        const structure = {};
+        clientRows.forEach(row => {
+          const prop = row.propietario || "Información General";
+          const placa = row.placa || "S/P";
+          if (!structure[prop]) structure[prop] = {};
+          if (!structure[prop][placa]) structure[prop][placa] = [];
+          structure[prop][placa].push({
+            nombre: row.nombredoc,
+            img: row.urlimagen,
+            pdf: row.urlpdf,
+            sat: row.urlsat,
+            icon: row.icono || 'bi-file-earmark'
           });
-          return obj;
-        })
-        .filter(r => r.id);
-    }
-
-    // ─── PIN UI ───
-    function showPinScreen(idURL, attempts) {
-      const pinLen = pinCorrect.length;
-      // Generar dots según largo del PIN
-      const dotsEl = document.getElementById('pin-dots');
-      dotsEl.innerHTML = Array(pinLen).fill('<div class="pin-dot"></div>').join('');
-
-      // Mostrar intentos restantes si ya hubo fallos
-      if (attempts.count > 0) {
-        const rem = CONFIG.maxAttempts - attempts.count;
-        document.getElementById('pin-attempts').textContent = `Intentos restantes: ${rem}`;
-      }
-
-      document.getElementById('pin-screen').style.display = 'flex';
-      window._pinIdURL = idURL;
-    }
-
-    function hidePinScreen() {
-      document.getElementById('pin-screen').style.display = 'none';
-      document.getElementById('locked-screen').style.display = 'none';
-    }
-
-    function updateDots() {
-      const dots = document.querySelectorAll('.pin-dot');
-      dots.forEach((d, i) => d.classList.toggle('filled', i < pinInput.length));
-    }
-
-    function pinPress(digit) {
-      const maxLen = pinCorrect ? pinCorrect.length : 6;
-      if (pinInput.length >= maxLen) return;
-      pinInput += digit;
-      updateDots();
-      // Auto-confirmar si se llenó el PIN
-      if (pinInput.length === maxLen) {
-        setTimeout(pinConfirm, 200);
-      }
-    }
-
-    function pinDelete() {
-      pinInput = pinInput.slice(0, -1);
-      updateDots();
-    }
-
-    function pinConfirm() {
-      if (!pinInput) return;
-      const idURL = window._pinIdURL;
-
-      if (pinInput === pinCorrect) {
-        // ✅ CORRECTO
-        resetAttempts(idURL);
-        setSession(idURL);
-        applyTheme(clientRows[0]);
-        renderPortal(buildStructure(clientRows), idURL);
-        hidePinScreen();
-      } else {
-        // ❌ INCORRECTO
-        pinInput = "";
-        updateDots();
-
-        const data = getAttempts(idURL);
-        data.count += 1;
-
-        if (data.count >= CONFIG.maxAttempts) {
-          data.lockedUntil = Date.now() + (CONFIG.lockSeconds * 1000);
-          data.count = 0;
-          saveAttempts(idURL, data);
-          showLockScreen(idURL, data.lockedUntil);
-        } else {
-          saveAttempts(idURL, data);
-          const rem = CONFIG.maxAttempts - data.count;
-          document.getElementById('pin-error').textContent = "PIN incorrecto";
-          document.getElementById('pin-attempts').textContent = `Intentos restantes: ${rem}`;
-          setTimeout(() => {
-            document.getElementById('pin-error').textContent = "";
-          }, 2000);
-        }
-      }
-    }
-
-    // ─── BLOQUEO TEMPORAL ───
-    function showLockScreen(idURL, lockedUntil) {
-      document.getElementById('pin-screen').style.display = 'none';
-      const lockEl = document.getElementById('locked-screen');
-      lockEl.style.display = 'flex';
-
-      const interval = setInterval(() => {
-        const rem = Math.ceil((lockedUntil - Date.now()) / 1000);
-        if (rem <= 0) {
-          clearInterval(interval);
-          lockEl.style.display = 'none';
-          // Recargar pantalla de PIN
-          pinInput = "";
-          const attempts = getAttempts(idURL);
-          showPinScreen(idURL, attempts);
-        } else {
-          document.getElementById('lock-countdown').textContent = rem;
-        }
-      }, 500);
-    }
-
-    // ─── HELPERS ───
-    function showError(title, msg) {
-      document.getElementById('pin-screen').style.display = 'none';
-      document.body.innerHTML = `
-        <div style="padding:150px 20px; text-align:center; font-family:'Plus Jakarta Sans',sans-serif; color:white; background:#000; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem;">
-          <i class="bi bi-shield-x" style="font-size:3rem; color:#ff4d4d;"></i>
-          <h2 style="font-size:1.2rem; font-weight:800;">${title}</h2>
-          <p style="color:#666; font-size:0.85rem;">${msg}</p>
-        </div>`;
-      document.body.style.display = "block";
-    }
-
-    function applyTheme(row) {
-      const root = document.documentElement;
-      if (row.color) root.style.setProperty('--brand-color', row.color);
-      if (row.fondo) root.style.setProperty('--bg-main', row.fondo);
-    }
-
-    function buildStructure(rows) {
-      const structure = {};
-      rows.forEach(row => {
-        const prop = row.propietario || "Información General";
-        const placa = row.placa || "S/P";
-        if (!structure[prop]) structure[prop] = {};
-        if (!structure[prop][placa]) structure[prop][placa] = [];
-        structure[prop][placa].push({
-          nombre: row.nombredoc,
-          img: row.urlimagen,
-          pdf: row.urlpdf,
-          sat: row.urlsat,
-          icon: row.icono || 'bi-file-earmark'
         });
-      });
-      return structure;
+
+        renderPortal(structure, idURL);
+      } catch (e) {
+        console.error("Error cargando base de datos:", e);
+        document.body.style.display = "block";
+      }
     }
 
     function csvToJSON(csv) {
@@ -665,19 +281,17 @@
         const obj = {};
         headers.forEach((header, index) => {
           let value = currentline[index] ? currentline[index].trim() : "";
-          obj[header] = value.replace(/^"|"$/g, '');
+          obj[header] = value.replace(/^"|"$/g, ''); 
         });
         result.push(obj);
       }
       return result;
     }
 
-    // ─── RENDER ───
     function renderPortal(structure, id) {
       document.body.style.display = "block";
       const selector = document.getElementById('vehicleSelector');
       const content = document.getElementById('content-area');
-      content.innerHTML = "";
 
       for (const propietario in structure) {
         const propContainer = document.createElement('div');
@@ -757,15 +371,6 @@
     // BLOQUEOS DE SEGURIDAD
     document.addEventListener('contextmenu', e => { if (e.target.id !== 'v-modal-img') e.preventDefault(); });
     document.onkeydown = e => { if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 67, 74].includes(e.keyCode)) || (e.ctrlKey && e.keyCode == 85)) return false; };
-
-    // Soporte teclado físico para el PIN
-    document.addEventListener('keydown', e => {
-      if (document.getElementById('pin-screen').style.display !== 'none') {
-        if (e.key >= '0' && e.key <= '9') pinPress(e.key);
-        else if (e.key === 'Backspace') pinDelete();
-        else if (e.key === 'Enter') pinConfirm();
-      }
-    });
 
     init();
   </script>
