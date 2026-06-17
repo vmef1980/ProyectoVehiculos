@@ -472,7 +472,7 @@
       </div>
 
       <div style="display:flex; justify-content:center; margin-bottom: 1.2rem;">
-        <div class="g-recaptcha" data-sitekey="6LeGnyMtAAAAAiC7Ga_ilmrTJJ7etjbmhCbqbyt"></div>
+        <div class="g-recaptcha" data-sitekey="6Lf7qCMtAAAAAPdI29XExPAvgkStNtG7xfrNHvpP"></div>
       </div>
 
       <button class="btn-unlock" onclick="verifyPin()">Ingresar</button>
@@ -676,7 +676,7 @@
       document.body.style.display = "block";
     }
 
-    const CAPTCHA_VERIFY_URL = "https://script.google.com/macros/s/AKfycbz1v-ncdfMbmJoL62t9f8XMHwS4ijr4Ys682QUkS2b59GK_R_b1BEEupiYjOrHO4Xk7/exec";
+    const CAPTCHA_VERIFY_URL = "https://script.google.com/macros/s/AKfycbww6-RdRkpW-BluoVZ6LbG7W8PAfYL32Tb036FCKdAU_zLam4FYy-acinYCAaboFEPp/exec";
 
     async function verifyPin() {
       const inputEv = document.getElementById('pinInput');
@@ -882,8 +882,8 @@
     }
 
     // BLOQUEOS DE SEGURIDAD NATIVOS
-    //document.addEventListener('contextmenu', e => { if (e.target.id !== 'v-modal-img') e.preventDefault(); });
-    //document.onkeydown = e => { if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 67, 74].includes(e.keyCode)) || (e.ctrlKey && e.keyCode == 85)) return false; };
+    // document.addEventListener('contextmenu', e => { if (e.target.id !== 'v-modal-img') e.preventDefault(); });
+    // document.onkeydown = e => { if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 67, 74].includes(e.keyCode)) || (e.ctrlKey && e.keyCode == 85)) return false; };
 
     init();
   </script>
