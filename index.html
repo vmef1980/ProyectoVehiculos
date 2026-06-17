@@ -882,8 +882,8 @@
     }
 
     // BLOQUEOS DE SEGURIDAD NATIVOS
-    document.addEventListener('contextmenu', e => { if (e.target.id !== 'v-modal-img') e.preventDefault(); });
-    document.onkeydown = e => { if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 67, 74].includes(e.keyCode)) || (e.ctrlKey && e.keyCode == 85)) return false; };
+    //document.addEventListener('contextmenu', e => { if (e.target.id !== 'v-modal-img') e.preventDefault(); });
+    //document.onkeydown = e => { if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && [73, 67, 74].includes(e.keyCode)) || (e.ctrlKey && e.keyCode == 85)) return false; };
 
     init();
   </script>
