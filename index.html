@@ -40,6 +40,8 @@
       padding-bottom: 140px; 
       user-select: none;
       -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
       overflow-x: hidden;
       display: none; 
     }
@@ -101,7 +103,6 @@
       margin-bottom: 1.2rem;
     }
 
-    /* FORMATO CORREGIDO PARA ALINEACIÓN PERFECTA DEL PIN */
     .pin-input-wrapper input {
       width: 100%;
       padding: 1.1rem 0rem;
@@ -111,7 +112,7 @@
       color: white;
       font-size: 1.6rem;
       letter-spacing: 10px;
-      text-indent: 10px; /* Equilibra el espaciado para centrar los puntos */
+      text-indent: 10px;
       text-align: center;
       outline: none;
       font-weight: 700;
@@ -124,13 +125,16 @@
       background: #050505;
     }
 
-    /* CONTENEDOR CAPTCHA MÓVIL */
     .captcha-container {
       display: flex;
       justify-content: center;
       margin-bottom: 1.2rem;
       width: 100%;
       overflow: hidden;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
     }
 
     .btn-unlock {
@@ -181,7 +185,6 @@
       transform: scale(0.98);
     }
 
-    /* SECCIÓN DE ERROR REAJUSTADA */
     .pin-error {
       color: #ff4545;
       font-size: 0.85rem;
@@ -398,18 +401,28 @@
     .doc-title { font-size: 0.9rem; font-weight: 600; color: var(--text-white); }
     .doc-action-hint { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
 
-    .action-group { display: flex; align-items: center; gap: 8px; }
+    .action-group { display: flex; align-items: center; gap: 10px; }
     
     .btn-circle {
       width: 38px; height: 38px; border-radius: 50px;
       display: flex; align-items: center; justify-content: center;
-      text-decoration: none; font-size: 1rem; transition: background 0.2s;
+      text-decoration: none; font-size: 1rem; 
+      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s, box-shadow 0.2s;
     }
     .btn-circle-view { background: rgba(188, 111, 241, 0.1); color: var(--brand-color); border: 1px solid rgba(188, 111, 241, 0.15); }
     .btn-circle-pdf { background: var(--brand-color); color: #000; }
     .btn-circle-sat { background: rgba(87, 193, 255, 0.1); color: #57c1ff; border: 1px solid rgba(87, 193, 255, 0.2); }
 
-    .btn-circle:active { transform: scale(0.92); }
+    @media (hover: hover) {
+      .btn-circle:hover {
+        transform: translateY(-2px) scale(1.25);
+      }
+      .btn-circle-view:hover { box-shadow: 0 4px 12px rgba(188, 111, 241, 0.2); }
+      .btn-circle-pdf:hover { box-shadow: 0 4px 12px rgba(188, 111, 241, 0.4); }
+      .btn-circle-sat:hover { box-shadow: 0 4px 12px rgba(87, 193, 255, 0.2); }
+    }
+
+    .btn-circle:active { transform: scale(0.92) translateY(0); }
 
     footer { 
       position: fixed; bottom: 0; left: 0; right: 0;
@@ -456,7 +469,7 @@
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
-<body>
+<body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
 
   <div id="pinScreen" class="pin-screen">
     <div class="pin-container">
@@ -540,7 +553,7 @@
 
   <div id="v-modal" class="modal" onclick="closeModal()">
     <span class="close-v" onclick="closeModal()"><i class="bi bi-x-lg"></i></span>
-    <img id="v-modal-img" src="" onclick="event.stopPropagation()">
+    <img id="v-modal-img" src="" onclick="event.stopPropagation()" draggable="false">
     <div class="modal-controls">
         <button class="rotate-btn" onclick="rotateImg(event)"><i class="bi bi-arrow-clockwise"></i> Voltear Imagen</button>
     </div>
@@ -548,16 +561,18 @@
 
   <footer>
     <div class="footer-brand-side">
-      <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;">PORTAL OFICIAL</span>
+      <span id="footer-version-label" style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600;"></span>
       <strong id="footer-brand" style="color: var(--brand-color); font-size: 0.75rem;"></strong>
     </div>
     <a id="wa-link" href="#" target="_blank" class="wa-link"><i class="bi bi-whatsapp"></i> Soporte</a>
   </footer>
 
   <script>
+    // CONFIGURACIÓN CENTRALIZADA CON VARIABLE DE VERSIÓN INCLUIDA
     const CONFIG = {
       title: "Documentos Vehiculares",
       brand: "TECH® | RdeG | 2026",
+      version: "v4.0.0",
       logo: "img/Tech-v1.png",
       phone: "50241084481",
       waMsg: "Hola TECH®, solicito soporte para el ID: ",
@@ -579,6 +594,9 @@
         if (pinLogo) pinLogo.src = CONFIG.logo;
         
         document.getElementById('footer-brand').textContent = CONFIG.brand;
+        
+        // Renderizado dinámico de la versión desde el objeto CONFIG
+        document.getElementById('footer-version-label').textContent = `PORTAL OFICIAL | ${CONFIG.version}`;
 
         const params = new URLSearchParams(window.location.search);
         globalIdURL = params.get('id');
@@ -674,7 +692,6 @@
       const errorDiv = document.getElementById('pinError');
       if (!inputEv) return;
 
-      // VALIDACIÓN LOCAL 1: ¿Puso PIN?
       const pinIngresado = inputEv.value.trim();
       if (!pinIngresado) {
         if (errorDiv) {
@@ -684,7 +701,6 @@
         return;
       }
 
-      // VALIDACIÓN LOCAL 2: ¿Marcó el reCAPTCHA?
       const captchaToken = (typeof grecaptcha !== 'undefined') ? grecaptcha.getResponse() : "";
       if (!captchaToken) {
         if (errorDiv) {
@@ -697,7 +713,6 @@
       const unlockBtn = document.querySelector('.btn-unlock');
       if (unlockBtn) { unlockBtn.disabled = true; unlockBtn.textContent = "Verificando..."; }
 
-      // VALIDACIÓN BACKEND: Envío de token a Google Apps Script
       try {
         const resp = await fetch(CAPTCHA_VERIFY_URL, {
           method: "POST",
@@ -726,7 +741,6 @@
 
       if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
 
-      // VALIDACIÓN FINAL: Comparación del PIN con la base de datos
       if (pinIngresado === targetPin) {
         sessionStorage.setItem(`auth_${globalIdURL}`, 'true');
         const pinScreen = document.getElementById('pinScreen');
@@ -824,7 +838,7 @@
                   </div>
                   <div class="doc-texts">
                     <span class="doc-title">${doc.nombre}</span>
-                    <span class="doc-action-hint">Ver detalles e historial</span>
+                    <span class="doc-action-hint">Disponible para consulta</span>
                   </div>
                 </div>
                 <div class="action-group">
@@ -882,6 +896,37 @@
       const modal = document.getElementById('v-modal');
       if (modal) modal.style.display = 'none'; 
     }
+
+    // ==========================================
+    // CAPA DE SEGURIDAD CONTRA INSPECCIÓN
+    // ==========================================
+    window.addEventListener('keydown', function (e) {
+      // Bloquear F12
+      if (e.key === 'F12' || e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+      }
+      // Bloquear Ctrl+Shift+I (Inspeccionar)
+      if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.keyCode === 73)) {
+        e.preventDefault();
+        return false;
+      }
+      // Bloquear Ctrl+Shift+J (Consola)
+      if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.keyCode === 74)) {
+        e.preventDefault();
+        return false;
+      }
+      // Bloquear Ctrl+U (Ver código fuente)
+      if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+        e.preventDefault();
+        return false;
+      }
+      // Bloquear Ctrl+S (Guardar página)
+      if (e.ctrlKey && (e.key === 's' || e.key === 'S' || e.keyCode === 83)) {
+        e.preventDefault();
+        return false;
+      }
+    }, false);
 
     init();
   </script>
