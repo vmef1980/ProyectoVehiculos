@@ -8,6 +8,7 @@
   <link rel="icon" type="image/x-icon" href="img/Tech-v1.ico">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 
   <style>
     :root {
@@ -469,7 +470,11 @@
       <div class="pin-input-wrapper">
         <input type="password" id="pinInput" placeholder="••••" maxlength="6" inputmode="numeric" pattern="[0-9]*" onkeydown="if(event.key === 'Enter') verifyPin()">
       </div>
-      
+
+      <div style="display:flex; justify-content:center; margin-bottom: 1.2rem;">
+        <div class="g-recaptcha" data-sitekey="6LeGnyMtAAAAAiC7Ga_ilmrTJJ7etjbmhCbqbyt"></div>
+      </div>
+
       <button class="btn-unlock" onclick="verifyPin()">Ingresar</button>
       
       <a id="pin-wa-link" href="#" target="_blank" class="btn-pin-support">
@@ -671,11 +676,55 @@
       document.body.style.display = "block";
     }
 
-    function verifyPin() {
+    const CAPTCHA_VERIFY_URL = "https://script.google.com/macros/s/AKfycbz1v-ncdfMbmJoL62t9f8XMHwS4ijr4Ys682QUkS2b59GK_R_b1BEEupiYjOrHO4Xk7/exec";
+
+    async function verifyPin() {
       const inputEv = document.getElementById('pinInput');
       const errorDiv = document.getElementById('pinError');
       if (!inputEv) return;
 
+      // Paso 1: validar que el captcha fue resuelto
+      const captchaToken = (typeof grecaptcha !== 'undefined') ? grecaptcha.getResponse() : "";
+      if (!captchaToken) {
+        if (errorDiv) {
+          errorDiv.textContent = "Por favor marca la casilla 'No soy un robot'.";
+          errorDiv.style.display = "block";
+        }
+        return;
+      }
+
+      const unlockBtn = document.querySelector('.btn-unlock');
+      if (unlockBtn) { unlockBtn.disabled = true; unlockBtn.textContent = "Verificando..."; }
+
+      try {
+        const resp = await fetch(CAPTCHA_VERIFY_URL, {
+          method: "POST",
+          body: JSON.stringify({ token: captchaToken })
+        });
+        const data = await resp.json();
+
+        if (!data.success) {
+          if (errorDiv) {
+            errorDiv.textContent = "Verificación de seguridad fallida. Intenta de nuevo.";
+            errorDiv.style.display = "block";
+          }
+          if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
+          if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
+          return;
+        }
+      } catch (err) {
+        console.error(err);
+        if (errorDiv) {
+          errorDiv.textContent = "Error al verificar el captcha. Revisa tu conexión.";
+          errorDiv.style.display = "block";
+        }
+        if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
+        return;
+      }
+
+      if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
+
+      // Paso 2: comprobar el PIN como antes
       if (inputEv.value.trim() === targetPin) {
         sessionStorage.setItem(`auth_${globalIdURL}`, 'true');
         const pinScreen = document.getElementById('pinScreen');
@@ -691,12 +740,14 @@
         }
       } else {
         if (errorDiv) {
+          errorDiv.textContent = "PIN incorrecto. Inténtalo de nuevo.";
           errorDiv.style.display = "block";
           inputEv.style.animation = 'shake 0.3s ease';
           setTimeout(() => { inputEv.style.animation = ''; }, 300);
         }
         inputEv.value = "";
         inputEv.focus();
+        if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
       }
     }
 
