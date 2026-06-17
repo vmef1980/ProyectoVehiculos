@@ -44,21 +44,18 @@
       display: none; 
     }
 
-    /* ANIMACIÓN NEÓN / PULSACIÓN GLOW */
     @keyframes neonGlow {
       0% { filter: drop-shadow(0 0 6px rgba(188, 111, 241, 0.6)); }
       50% { filter: drop-shadow(0 0 16px rgba(188, 111, 241, 0.95)) drop-shadow(0 0 30px rgba(188, 111, 241, 0.4)); }
       100% { filter: drop-shadow(0 0 6px rgba(188, 111, 241, 0.6)); }
     }
 
-    /* ANIMACIÓN PARA EL BOTÓN DE SALIR (PULSO ROJO ELEGANTE) */
     @keyframes logoutPulse {
       0% { box-shadow: 0 0 0 0 rgba(255, 95, 95, 0.3); border-color: rgba(255, 95, 95, 0.3); }
       70% { box-shadow: 0 0 0 8px rgba(255, 95, 95, 0); border-color: rgba(255, 95, 95, 0.5); }
       100% { box-shadow: 0 0 0 0 rgba(255, 95, 95, 0); border-color: rgba(255, 95, 95, 0.3); }
     }
 
-    /* PANTALLA DE BLOQUEO PREMIUM */
     .pin-screen {
       position: fixed;
       inset: 0;
@@ -68,7 +65,7 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 3rem 1.5rem 1.5rem 1.5rem;
+      padding: 2.5rem 1.5rem 1.5rem 1.5rem;
       overflow-y: auto;
     }
 
@@ -82,7 +79,7 @@
     .pin-logo {
       width: 85px;
       height: auto;
-      margin-bottom: 1.8rem;
+      margin-bottom: 1.5rem;
       animation: neonGlow 3s infinite ease-in-out;
     }
 
@@ -97,22 +94,24 @@
       color: var(--text-gray);
       font-size: 0.88rem;
       line-height: 1.4;
-      margin-bottom: 2rem;
+      margin-bottom: 1.8rem;
     }
 
     .pin-input-wrapper {
       margin-bottom: 1.2rem;
     }
 
+    /* FORMATO CORREGIDO PARA ALINEACIÓN PERFECTA DEL PIN */
     .pin-input-wrapper input {
       width: 100%;
-      padding: 1.2rem 0.5rem;
+      padding: 1.1rem 0rem;
       border-radius: var(--radius-lg);
       background: var(--bg-input);
       border: 1.5px solid var(--border-color);
       color: white;
       font-size: 1.6rem;
-      letter-spacing: 12px;
+      letter-spacing: 10px;
+      text-indent: 10px; /* Equilibra el espaciado para centrar los puntos */
       text-align: center;
       outline: none;
       font-weight: 700;
@@ -123,6 +122,15 @@
       border-color: var(--brand-color);
       box-shadow: 0 0 20px rgba(188, 111, 241, 0.15);
       background: #050505;
+    }
+
+    /* CONTENEDOR CAPTCHA MÓVIL */
+    .captcha-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.2rem;
+      width: 100%;
+      overflow: hidden;
     }
 
     .btn-unlock {
@@ -143,6 +151,7 @@
     .btn-unlock:disabled {
       background: var(--text-muted);
       cursor: not-allowed;
+      opacity: 0.6;
     }
 
     .btn-unlock:active:not(:disabled) {
@@ -172,15 +181,16 @@
       transform: scale(0.98);
     }
 
+    /* SECCIÓN DE ERROR REAJUSTADA */
     .pin-error {
       color: #ff4545;
       font-size: 0.85rem;
-      margin-top: 1rem;
+      margin-top: 1.2rem;
       font-weight: 600;
       display: none;
+      line-height: 1.4;
     }
 
-    /* SECCIÓN COMERCIAL PROFESIONAL MODIFICADA */
     .pin-commercial-footer {
       width: 100%;
       max-width: 360px;
@@ -190,6 +200,7 @@
       border-radius: var(--radius-xl);
       text-align: center;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      margin-top: 1.5rem;
     }
 
     .pin-commercial-footer p {
@@ -225,7 +236,6 @@
       40%, 80% { transform: translateX(8px); }
     }
 
-    /* HEADER NATIVO MÓVIL CON BOTÓN SALIR REMARCADO */
     .fixed-header {
       position: fixed;
       top: 0; left: 0; right: 0;
@@ -269,7 +279,6 @@
       transform: scale(0.90);
     }
 
-    /* CONTENEDOR SELECTOR */
     .sticky-selector-bar {
       padding: 0.5rem 1.2rem 1rem 1.2rem;
       background: var(--bg-main);
@@ -282,7 +291,6 @@
       font-size: 0.9rem; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none;
     }
 
-    /* BADGE LEGAL DE CONFIANZA ACTUALIZADO */
     .legal-badge-container {
       margin-top: 2.5rem;
       padding: 0 0.5rem;
@@ -333,7 +341,6 @@
       margin-bottom: 2px;
     }
 
-    /* ESTRUCTURA DE CONTENIDO */
     .main-wrapper { max-width: 800px; margin: 0 auto; padding: 0 1.2rem; }
     
     .owner-group-title {
@@ -345,7 +352,6 @@
       letter-spacing: 1.5px;
     }
 
-    /* VISTA DE VEHÍCULO COMPACTA */
     .vehicle-section { 
       margin-bottom: 1.5rem; 
       background: var(--bg-card); 
@@ -369,7 +375,6 @@
       font-size: 1.1rem; font-weight: 800; border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    /* LISTA OPTIMIZADA */
     .document-list { display: flex; flex-direction: column; }
     .document-item { 
       display: flex; 
@@ -393,7 +398,6 @@
     .doc-title { font-size: 0.9rem; font-weight: 600; color: var(--text-white); }
     .doc-action-hint { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
 
-    /* BOTONES DE ACCIÓN COMPACTOS CON COLORES */
     .action-group { display: flex; align-items: center; gap: 8px; }
     
     .btn-circle {
@@ -407,7 +411,6 @@
 
     .btn-circle:active { transform: scale(0.92); }
 
-    /* FOOTER */
     footer { 
       position: fixed; bottom: 0; left: 0; right: 0;
       background: rgba(11, 11, 12, 0.85); 
@@ -424,7 +427,6 @@
       display: flex; align-items: center; gap: 6px; 
     }
 
-    /* MODAL VISOR */
     .modal { 
       position: fixed; inset: 0; background: #000000; 
       display: none; z-index: 9999; flex-direction: column; 
@@ -463,11 +465,11 @@
       <p>Introduce tu PIN para visualizar el expediente de documentación vehicular.</p>
       
       <div class="pin-input-wrapper">
-        <input type="password" id="pinInput" placeholder="••••" maxlength="6" inputmode="numeric" pattern="[0-9]*" onkeydown="if(event.key === 'Enter') verifyPin()">
+        <input type="password" id="pinInput" placeholder="••••" maxlength="6" inputmode="numeric" pattern="[0-9]*" oninput="clearError()" onkeydown="if(event.key === 'Enter') verifyPin()">
       </div>
 
-      <div style="display:flex; justify-content:center; margin-bottom: 1.2rem;">
-        <div class="g-recaptcha" data-sitekey="6Lf7qCMtAAAAAPdI29XExPAvgkStNtG7xfrNHvpP"></div>
+      <div class="captcha-container">
+        <div class="g-recaptcha" data-sitekey="6Lc2wSMtAAAAADjYdexG-mMQLTXFgnYG4gEFGFGo"></div>
       </div>
 
       <button class="btn-unlock" onclick="verifyPin()">Ingresar</button>
@@ -567,7 +569,6 @@
     let targetPin = ""; 
     let globalStructure = {};
     let globalIdURL = "";
-    const CAPTCHA_VERIFY_URL = "https://script.google.com/macros/s/AKfycbww6-RdRkpW-BluoVZ6LbG7W8PAfYL32Tb036FCKdAU_zLam4FYy-acinYCAaboFEPp/exec";
 
     async function init() {
       try {
@@ -661,15 +662,33 @@
       document.body.style.display = "block";
     }
 
+    const CAPTCHA_VERIFY_URL = "https://script.google.com/macros/s/AKfycbzYLC0_gw-Wf59mkPlxo272TsVk1NxfkynmwRfyFaHSJRoOjrnCiUWdkTYQ7pQDLwm1/exec";
+
+    function clearError() {
+      const errorDiv = document.getElementById('pinError');
+      if (errorDiv) errorDiv.style.display = 'none';
+    }
+
     async function verifyPin() {
       const inputEv = document.getElementById('pinInput');
       const errorDiv = document.getElementById('pinError');
       if (!inputEv) return;
 
+      // VALIDACIÓN LOCAL 1: ¿Puso PIN?
       const pinIngresado = inputEv.value.trim();
       if (!pinIngresado) {
         if (errorDiv) {
-          errorDiv.textContent = "Por favor ingresa tu PIN.";
+          errorDiv.textContent = "Por favor ingresa tu PIN de acceso.";
+          errorDiv.style.display = "block";
+        }
+        return;
+      }
+
+      // VALIDACIÓN LOCAL 2: ¿Marcó el reCAPTCHA?
+      const captchaToken = (typeof grecaptcha !== 'undefined') ? grecaptcha.getResponse() : "";
+      if (!captchaToken) {
+        if (errorDiv) {
+          errorDiv.textContent = "Por favor marca la casilla 'No soy un robot'.";
           errorDiv.style.display = "block";
         }
         return;
@@ -678,35 +697,36 @@
       const unlockBtn = document.querySelector('.btn-unlock');
       if (unlockBtn) { unlockBtn.disabled = true; unlockBtn.textContent = "Verificando..."; }
 
-      const captchaToken = (typeof grecaptcha !== 'undefined') ? grecaptcha.getResponse() : "";
-      
-      // Intentamos validar vía Webhook si hay token disponible
-      if (captchaToken) {
-        try {
-          const resp = await fetch(CAPTCHA_VERIFY_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({ token: captchaToken })
-          });
-          
-          if (resp.ok) {
-            const data = await resp.json();
-            if (data && data.success === false) {
-              if (errorDiv) {
-                errorDiv.textContent = "Verificación de seguridad inválida. Intenta de nuevo.";
-                errorDiv.style.display = "block";
-              }
-              if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
-              if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
-              return;
-            }
+      // VALIDACIÓN BACKEND: Envío de token a Google Apps Script
+      try {
+        const resp = await fetch(CAPTCHA_VERIFY_URL, {
+          method: "POST",
+          body: JSON.stringify({ token: captchaToken })
+        });
+        const data = await resp.json();
+
+        if (!data.success) {
+          if (errorDiv) {
+            errorDiv.textContent = "Verificación de seguridad inválida. Recuerda actualizar tu Clave Secreta en Google Apps Script.";
+            errorDiv.style.display = "block";
           }
-        } catch (err) {
-          console.warn("Fallo de CORS/Red controlado. Omitiendo validación estricta de servidor.");
+          if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
+          if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
+          return;
         }
+      } catch (err) {
+        console.error(err);
+        if (errorDiv) {
+          errorDiv.textContent = "Error al conectar con el servidor de seguridad. Revisa tu conexión.";
+          errorDiv.style.display = "block";
+        }
+        if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
+        return;
       }
 
-      // Proceso de validación de PIN final
+      if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
+
+      // VALIDACIÓN FINAL: Comparación del PIN con la base de datos
       if (pinIngresado === targetPin) {
         sessionStorage.setItem(`auth_${globalIdURL}`, 'true');
         const pinScreen = document.getElementById('pinScreen');
@@ -722,7 +742,7 @@
         }
       } else {
         if (errorDiv) {
-          errorDiv.textContent = "PIN incorrecto. Inténtalo de nuevo.";
+          errorDiv.textContent = "El PIN ingresado es incorrecto. Inténtalo de nuevo.";
           errorDiv.style.display = "block";
           inputEv.style.animation = 'shake 0.3s ease';
           setTimeout(() => { inputEv.style.animation = ''; }, 300);
@@ -730,7 +750,6 @@
         inputEv.value = "";
         inputEv.focus();
         if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
-        if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
       }
     }
 
