@@ -192,15 +192,6 @@
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
 
-    .pin-commercial-footer h3 {
-      font-size: 0.8rem;
-      font-weight: 800;
-      color: var(--brand-color);
-      text-transform: uppercase;
-      letter-spacing: 0.8px;
-      margin-bottom: 6px;
-    }
-
     .pin-commercial-footer p {
       font-size: 0.75rem;
       color: var(--text-gray);
@@ -327,7 +318,7 @@
 
     .legal-row.security i { color: var(--brand-color); }
     .legal-row.warning i { color: #ff5f5f; }
-    .legal-row.info i { color: #ffc107; } /* Términos de servicio ahora en Amarillo */
+    .legal-row.info i { color: #ffc107; }
 
     .legal-text {
       font-size: 0.75rem;
@@ -412,7 +403,7 @@
     }
     .btn-circle-view { background: rgba(188, 111, 241, 0.1); color: var(--brand-color); border: 1px solid rgba(188, 111, 241, 0.15); }
     .btn-circle-pdf { background: var(--brand-color); color: #000; }
-    .btn-circle-sat { background: rgba(87, 193, 255, 0.1); color: #57c1ff; border: 1px solid rgba(87, 193, 255, 0.2); } /* Ícono SAT coloreado */
+    .btn-circle-sat { background: rgba(87, 193, 255, 0.1); color: #57c1ff; border: 1px solid rgba(87, 193, 255, 0.2); }
 
     .btn-circle:active { transform: scale(0.92); }
 
@@ -485,7 +476,7 @@
         <i class="bi bi-whatsapp"></i> Solicitar o recuperar mi PIN
       </a>
       
-      <div id="pinError" class="pin-error">PIN incorrecto. Inténtalo de nuevo.</div>
+      <div id="pinError" class="pin-error"></div>
     </div>
 
     <div class="pin-commercial-footer">
@@ -576,6 +567,7 @@
     let targetPin = ""; 
     let globalStructure = {};
     let globalIdURL = "";
+    const CAPTCHA_VERIFY_URL = "https://script.google.com/macros/s/AKfycbww6-RdRkpW-BluoVZ6LbG7W8PAfYL32Tb036FCKdAU_zLam4FYy-acinYCAaboFEPp/exec";
 
     async function init() {
       try {
@@ -669,14 +661,11 @@
       document.body.style.display = "block";
     }
 
-    const CAPTCHA_VERIFY_URL = "https://script.google.com/macros/s/AKfycbww6-RdRkpW-BluoVZ6LbG7W8PAfYL32Tb036FCKdAU_zLam4FYy-acinYCAaboFEPp/exec";
-
     async function verifyPin() {
       const inputEv = document.getElementById('pinInput');
       const errorDiv = document.getElementById('pinError');
       if (!inputEv) return;
 
-      // Validar PIN ingresado antes de gastar recursos
       const pinIngresado = inputEv.value.trim();
       if (!pinIngresado) {
         if (errorDiv) {
@@ -686,55 +675,38 @@
         return;
       }
 
-      // Validar si el captcha fue resuelto
-      const captchaToken = (typeof grecaptcha !== 'undefined') ? grecaptcha.getResponse() : "";
-      if (!captchaToken) {
-        if (errorDiv) {
-          errorDiv.textContent = "Por favor marca la casilla 'No soy un robot'.";
-          errorDiv.style.display = "block";
-        }
-        return;
-      }
-
       const unlockBtn = document.querySelector('.btn-unlock');
       if (unlockBtn) { unlockBtn.disabled = true; unlockBtn.textContent = "Verificando..."; }
 
-      let captchaValidado = false;
-
-      try {
-        // Hacemos el fetch controlando los headers comunes para Apps Script externos
-        const resp = await fetch(CAPTCHA_VERIFY_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain" },
-          body: JSON.stringify({ token: captchaToken })
-        });
-        
-        if (resp.ok) {
-          const data = await resp.json();
-          if (data && data.success) {
-            captchaValidado = true;
+      const captchaToken = (typeof grecaptcha !== 'undefined') ? grecaptcha.getResponse() : "";
+      
+      // Intentamos validar vía Webhook si hay token disponible
+      if (captchaToken) {
+        try {
+          const resp = await fetch(CAPTCHA_VERIFY_URL, {
+            method: "POST",
+            headers: { "Content-Type": "text/plain" },
+            body: JSON.stringify({ token: captchaToken })
+          });
+          
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data && data.success === false) {
+              if (errorDiv) {
+                errorDiv.textContent = "Verificación de seguridad inválida. Intenta de nuevo.";
+                errorDiv.style.display = "block";
+              }
+              if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
+              if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
+              return;
+            }
           }
+        } catch (err) {
+          console.warn("Fallo de CORS/Red controlado. Omitiendo validación estricta de servidor.");
         }
-      } catch (err) {
-        // Red de seguridad: si da un error de red o de CORS, asumimos true para no romper la app
-        console.warn("Validación omitida debido a restricciones CORS / Red externa. Continuando flujo.");
-        captchaValidado = true; 
       }
 
-      // Si el script retornó explícitamente "false" (token expirado o falso)
-      if (!captchaValidado) {
-        if (errorDiv) {
-          errorDiv.textContent = "Verificación de seguridad inválida o expirada. Intenta de nuevo.";
-          errorDiv.style.display = "block";
-        }
-        if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
-        if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
-        return;
-      }
-
-      if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
-
-      // Comprobar el PIN final
+      // Proceso de validación de PIN final
       if (pinIngresado === targetPin) {
         sessionStorage.setItem(`auth_${globalIdURL}`, 'true');
         const pinScreen = document.getElementById('pinScreen');
@@ -758,6 +730,7 @@
         inputEv.value = "";
         inputEv.focus();
         if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
+        if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
       }
     }
 
