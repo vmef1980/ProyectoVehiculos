@@ -17,7 +17,7 @@
 
   <div id="pinScreen" class="pin-screen">
     <div class="pin-container">
-      <img id="pin-logo" src="" alt="LOGO" class="pin-logo">
+      <div id="pin-logo" class="pin-logo"></div>
       <h2>Acceso Protegido</h2>
       <p>Introduce tu PIN para visualizar el expediente de documentación vehicular.</p>
       
@@ -48,7 +48,7 @@
 
   <header class="fixed-header">
     <div class="header-left">
-      <img id="header-logo" src="" alt="LOGO" class="main-logo">
+      <div id="header-logo" class="main-logo"></div>
       <h1 id="portal-title"></h1>
     </div>
     <button class="btn-logout" onclick="logout()" title="Cerrar Sesión / Volver"><i class="bi bi-box-arrow-right"></i></button>
@@ -61,7 +61,44 @@
       </select>
       <i class="bi bi-chevron-down" style="position: absolute; right: 1.2rem; top: 1.1rem; pointer-events: none; color: var(--brand-color); font-size: 0.8rem;"></i>
     </div>
+
+    <button class="btn-upload-toggle" onclick="toggleUploadPanel()">
+      <i class="bi bi-cloud-upload-fill"></i> Subir mis documentos
+    </button>
   </div>
+
+  <!-- ===================== PANEL DE SUBIDA DE DOCUMENTOS ===================== -->
+  <div id="uploadPanel" class="upload-panel">
+    <div class="upload-card">
+      <div class="upload-card-header">
+        <h3><i class="bi bi-cloud-upload-fill"></i> Subir documento</h3>
+        <button class="btn-close-upload" onclick="toggleUploadPanel()"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <p class="upload-hint">Sube una foto o PDF de tu documento. Lo revisaremos y lo publicaremos en tu portal a la brevedad.</p>
+
+      <label class="upload-label">Vehículo / Placa</label>
+      <select id="uploadPlacaSelect" class="upload-select">
+        <option value="">Selecciona tu vehículo</option>
+      </select>
+
+      <label class="upload-label">Tipo de documento</label>
+      <select id="uploadTipoDoc" class="upload-select">
+        <option value="Tarjeta de Circulación">Tarjeta de Circulación</option>
+        <option value="Calcomanía">Calcomanía</option>
+      </select>
+
+      <label class="upload-label">Archivo (foto o PDF)</label>
+      <input type="file" id="uploadFileInput" class="upload-file-input" accept="image/*,application/pdf">
+
+      <button class="btn-upload-submit" onclick="submitUpload()">
+        <i class="bi bi-send-fill"></i> Enviar documento
+      </button>
+
+      <div id="uploadStatus" class="upload-status"></div>
+    </div>
+  </div>
+  <!-- ===================== FIN PANEL DE SUBIDA ===================== -->
 
   <main class="main-wrapper">
     <div id="content-area"></div>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 90" fill="none">
+  <g stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M50 20 L34 20 L14 38" />
+    <circle cx="60" cy="20" r="11" fill="none" />
+    <path d="M48 45 L14 45" />
+    <circle cx="60" cy="45" r="11" fill="none" />
+    <path d="M50 70 L34 70 L14 52" />
+    <circle cx="60" cy="70" r="11" fill="none" />
+  </g>
+  <text x="96" y="62" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="800" font-size="48" letter-spacing="1" fill="currentColor">TECH</text>
+</svg>

@@ -1,10 +1,9 @@
-
-    // CONFIGURACIÓN CENTRALIZADA CON VARIABLE DE VERSIÓN INCLUIDA
+// CONFIGURACIÓN CENTRALIZADA CON VARIABLE DE VERSIÓN INCLUIDA
     const CONFIG = {
       title: "Documentos Vehiculares",
       brand: "TECH® | RdeG | 2026",
-      version: "v4.0.0",
-      logo: "img/Tech-v1.png",
+      version: "v5.0.0",
+      logo: "img/Tech-logo.svg",
       phone: "50241084481",
       waMsg: "Hola TECH®, solicito soporte para el ID: ",
       waCommercialMsg: "Hola TECH®, deseo información de sus productos. Vengo de la aplicación de Gestión Documental Vehicular.",
@@ -16,13 +15,37 @@
     let globalStructure = {};
     let globalIdURL = "";
 
+    function hexToRgb(hex) {
+      if (!hex) return null;
+      hex = hex.trim().replace('#', '');
+      if (hex.length === 3) {
+        hex = hex.split('').map(c => c + c).join('');
+      }
+      if (hex.length !== 6) return null;
+      const r = parseInt(hex.substring(0, 2), 16);
+      const g = parseInt(hex.substring(2, 4), 16);
+      const b = parseInt(hex.substring(4, 6), 16);
+      if (isNaN(r) || isNaN(g) || isNaN(b)) return null;
+      return { r, g, b };
+    }
+
+    async function loadInlineLogo() {
+      try {
+        const resp = await fetch(CONFIG.logo);
+        const svgText = await resp.text();
+        const headerLogo = document.getElementById('header-logo');
+        const pinLogo = document.getElementById('pin-logo');
+        if (headerLogo) headerLogo.innerHTML = svgText;
+        if (pinLogo) pinLogo.innerHTML = svgText;
+      } catch (e) {
+        console.error("No se pudo cargar el logo SVG", e);
+      }
+    }
+
     async function init() {
       try {
         document.getElementById('portal-title').textContent = CONFIG.title;
-        document.getElementById('header-logo').src = CONFIG.logo;
-        
-        const pinLogo = document.getElementById('pin-logo');
-        if (pinLogo) pinLogo.src = CONFIG.logo;
+        await loadInlineLogo();
         
         document.getElementById('footer-brand').textContent = CONFIG.brand;
         
@@ -60,7 +83,11 @@
         targetPin = clientRows[0].pin ? clientRows[0].pin.trim() : "";
         
         const root = document.documentElement;
-        if (clientRows[0].color) root.style.setProperty('--brand-color', clientRows[0].color);
+        if (clientRows[0].color) {
+          root.style.setProperty('--brand-color', clientRows[0].color);
+          const rgb = hexToRgb(clientRows[0].color);
+          if (rgb) root.style.setProperty('--brand-color-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
+        }
         if (clientRows[0].fondo) root.style.setProperty('--bg-main', clientRows[0].fondo);
 
         globalStructure = {}; 
@@ -112,6 +139,7 @@
     }
 
     const CAPTCHA_VERIFY_URL = "https://script.google.com/macros/s/AKfycbzYLC0_gw-Wf59mkPlxo272TsVk1NxfkynmwRfyFaHSJRoOjrnCiUWdkTYQ7pQDLwm1/exec";
+    const UPLOAD_DOCS_URL = "https://script.google.com/macros/s/AKfycbwCcsxBDJxWKPnKmybNXQ9K-969jWOwQ2sJmbhPHf-aoR75z4mZ-BiDk8BrXrLXs5Pu/exec";
 
     function clearError() {
       const errorDiv = document.getElementById('pinError');
@@ -378,5 +406,122 @@
         return false;
       }
     }, false);
+
+    // ==========================================
+    // PANEL DE SUBIDA DE DOCUMENTOS DEL CLIENTE
+    // ==========================================
+
+    function toggleUploadPanel() {
+      const panel = document.getElementById('uploadPanel');
+      if (!panel) return;
+      const isOpen = panel.style.display === 'flex';
+      if (isOpen) {
+        panel.style.display = 'none';
+      } else {
+        populateUploadPlacaSelect();
+        panel.style.display = 'flex';
+      }
+    }
+
+    function populateUploadPlacaSelect() {
+      const sel = document.getElementById('uploadPlacaSelect');
+      if (!sel) return;
+      sel.innerHTML = '<option value="">Selecciona tu vehículo</option>';
+
+      for (const propietario in globalStructure) {
+        for (const placa in globalStructure[propietario]) {
+          const opt = document.createElement('option');
+          opt.value = placa;
+          opt.textContent = `🚗 ${placa}`;
+          sel.appendChild(opt);
+        }
+      }
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          // El resultado viene como "data:tipo/mime;base64,XXXXX" — solo nos interesa la parte después de la coma
+          const result = reader.result;
+          const base64 = result.split(',')[1];
+          resolve(base64);
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function submitUpload() {
+      const placaSelect = document.getElementById('uploadPlacaSelect');
+      const tipoDocSelect = document.getElementById('uploadTipoDoc');
+      const fileInput = document.getElementById('uploadFileInput');
+      const statusDiv = document.getElementById('uploadStatus');
+      const submitBtn = document.querySelector('.btn-upload-submit');
+
+      const placa = placaSelect ? placaSelect.value : "";
+      const tipoDoc = tipoDocSelect ? tipoDocSelect.value : "";
+      const file = fileInput && fileInput.files.length > 0 ? fileInput.files[0] : null;
+
+      statusDiv.className = 'upload-status';
+
+      if (!placa) {
+        statusDiv.textContent = "Por favor selecciona tu vehículo.";
+        statusDiv.className = 'upload-status err';
+        return;
+      }
+      if (!file) {
+        statusDiv.textContent = "Por favor selecciona un archivo (foto o PDF).";
+        statusDiv.className = 'upload-status err';
+        return;
+      }
+
+      // Límite razonable de tamaño (10MB) para evitar fallos de envío
+      const maxSizeBytes = 10 * 1024 * 1024;
+      if (file.size > maxSizeBytes) {
+        statusDiv.textContent = "El archivo es muy grande. El límite es 10MB.";
+        statusDiv.className = 'upload-status err';
+        return;
+      }
+
+      if (submitBtn) { submitBtn.disabled = true; }
+      statusDiv.textContent = "Subiendo documento, espera un momento...";
+      statusDiv.className = 'upload-status loading';
+
+      try {
+        const base64Data = await fileToBase64(file);
+
+        const payload = {
+          clienteId: globalIdURL,
+          tipoDoc: tipoDoc,
+          placa: placa,
+          fileName: file.name,
+          mimeType: file.type || "application/octet-stream",
+          base64Data: base64Data
+        };
+
+        const resp = await fetch(UPLOAD_DOCS_URL, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+          statusDiv.textContent = "¡Documento enviado! Lo revisaremos pronto.";
+          statusDiv.className = 'upload-status ok';
+          if (fileInput) fileInput.value = "";
+          setTimeout(() => { toggleUploadPanel(); }, 2000);
+        } else {
+          statusDiv.textContent = "Hubo un problema al subir el documento. Intenta de nuevo.";
+          statusDiv.className = 'upload-status err';
+        }
+      } catch (err) {
+        console.error(err);
+        statusDiv.textContent = "Error de conexión. Revisa tu internet e intenta de nuevo.";
+        statusDiv.className = 'upload-status err';
+      }
+
+      if (submitBtn) { submitBtn.disabled = false; }
+    }
 
     init();

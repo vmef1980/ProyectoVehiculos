@@ -1,5 +1,6 @@
-    :root {
+:root {
       --brand-color: #BC6FF1;          
+      --brand-color-rgb: 188, 111, 241;
       --bg-main: #0b0b0c;              
       --bg-card: rgba(20, 20, 22, 0.7);
       --bg-input: #161618;
@@ -34,9 +35,9 @@
     }
 
     @keyframes neonGlow {
-      0% { filter: drop-shadow(0 0 6px rgba(188, 111, 241, 0.6)); }
-      50% { filter: drop-shadow(0 0 16px rgba(188, 111, 241, 0.95)) drop-shadow(0 0 30px rgba(188, 111, 241, 0.4)); }
-      100% { filter: drop-shadow(0 0 6px rgba(188, 111, 241, 0.6)); }
+      0% { filter: drop-shadow(0 0 6px rgba(var(--brand-color-rgb), 0.6)); }
+      50% { filter: drop-shadow(0 0 16px rgba(var(--brand-color-rgb), 0.95)) drop-shadow(0 0 30px rgba(var(--brand-color-rgb), 0.4)); }
+      100% { filter: drop-shadow(0 0 6px rgba(var(--brand-color-rgb), 0.6)); }
     }
 
     @keyframes logoutPulse {
@@ -66,11 +67,15 @@
     }
 
     .pin-logo {
-      width: 85px;
+      width: 220px;
       height: auto;
-      margin-bottom: 1.5rem;
+      margin: 0 auto 1.5rem auto;
+      color: var(--brand-color);
+      display: flex;
+      justify-content: center;
       animation: neonGlow 3s infinite ease-in-out;
     }
+    .pin-logo svg { width: 100%; height: auto; display: block; }
 
     .pin-container h2 {
       font-size: 1.5rem;
@@ -108,7 +113,7 @@
 
     .pin-input-wrapper input:focus {
       border-color: var(--brand-color);
-      box-shadow: 0 0 20px rgba(188, 111, 241, 0.15);
+      box-shadow: 0 0 20px rgba(var(--brand-color-rgb), 0.15);
       background: #050505;
     }
 
@@ -206,8 +211,8 @@
       justify-content: center;
       gap: 6px;
       padding: 0.65rem 1.4rem;
-      background: rgba(188, 111, 241, 0.12);
-      border: 1px solid rgba(188, 111, 241, 0.25);
+      background: rgba(var(--brand-color-rgb), 0.12);
+      border: 1px solid rgba(var(--brand-color-rgb), 0.25);
       color: var(--brand-color);
       font-size: 0.78rem;
       font-weight: 700;
@@ -216,7 +221,7 @@
       transition: all 0.2s;
     }
     .btn-commercial-cta:active {
-      background: rgba(188, 111, 241, 0.25);
+      background: rgba(var(--brand-color-rgb), 0.25);
       transform: scale(0.95);
     }
 
@@ -243,9 +248,13 @@
 
     .header-left { display: flex; align-items: center; gap: 12px; }
     .main-logo { 
-      width: 38px; 
+      width: 96px; 
+      color: var(--brand-color);
+      display: flex;
+      align-items: center;
       animation: neonGlow 4s infinite ease-in-out;
     }
+    .main-logo svg { width: 100%; height: auto; display: block; }
     h1 { font-size: 1rem; font-weight: 700; letter-spacing: -0.2px; }
 
     .btn-logout {
@@ -272,14 +281,158 @@
     .sticky-selector-bar {
       padding: 0.5rem 1.2rem 1rem 1.2rem;
       background: var(--bg-main);
+      display: flex;
+      gap: 10px;
     }
     
-    .selector-container { width: 100%; position: relative; }
+    .selector-container { width: 100%; position: relative; flex: 1; }
     select { 
       width: 100%; padding: 1rem 1.2rem; border-radius: var(--radius-md); background: var(--bg-card); 
       border: 1px solid var(--border-color); color: white; font-weight: 600; 
       font-size: 0.9rem; cursor: pointer; outline: none; appearance: none; -webkit-appearance: none;
     }
+
+    .btn-upload-toggle {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 1rem 1.1rem;
+      border-radius: var(--radius-md);
+      background: rgba(var(--brand-color-rgb), 0.1);
+      border: 1px solid rgba(var(--brand-color-rgb), 0.25);
+      color: var(--brand-color);
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .btn-upload-toggle:active { transform: scale(0.96); background: rgba(var(--brand-color-rgb), 0.2); }
+
+    .upload-panel {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 5000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.2rem;
+    }
+
+    .upload-card {
+      width: 100%;
+      max-width: 400px;
+      background: #131315;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-xl);
+      padding: 1.5rem;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .upload-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.8rem;
+    }
+    .upload-card-header h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .upload-card-header h3 i { color: var(--brand-color); }
+
+    .btn-close-upload {
+      background: rgba(255,255,255,0.06);
+      border: none;
+      color: white;
+      width: 34px; height: 34px;
+      border-radius: 50px;
+      cursor: pointer;
+    }
+
+    .upload-hint {
+      font-size: 0.8rem;
+      color: var(--text-gray);
+      line-height: 1.4;
+      margin-bottom: 1.2rem;
+    }
+
+    .upload-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .upload-select {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: white;
+      font-size: 0.9rem;
+      font-weight: 600;
+      outline: none;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .upload-file-input {
+      width: 100%;
+      padding: 0.9rem 1rem;
+      border-radius: var(--radius-md);
+      background: var(--bg-input);
+      border: 1.5px dashed var(--border-color);
+      color: var(--text-gray);
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    .btn-upload-submit {
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 1.1rem;
+      border: none;
+      background: var(--brand-color);
+      color: #000;
+      font-weight: 800;
+      border-radius: var(--radius-lg);
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-upload-submit:disabled {
+      background: var(--text-muted);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    .btn-upload-submit:active:not(:disabled) { transform: scale(0.98); }
+
+    .upload-status {
+      margin-top: 1rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-align: center;
+      display: none;
+      line-height: 1.4;
+    }
+    .upload-status.ok { color: #4ade80; display: block; }
+    .upload-status.err { color: #ff4545; display: block; }
+    .upload-status.loading { color: var(--text-gray); display: block; }
 
     .legal-badge-container {
       margin-top: 2.5rem;
@@ -396,7 +549,7 @@
       border: none; cursor: pointer; outline: none; font-size: 1rem; 
       transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background 0.2s, box-shadow 0.2s;
     }
-    .btn-circle-view { background: rgba(188, 111, 241, 0.1); color: var(--brand-color); border: 1px solid rgba(188, 111, 241, 0.15); }
+    .btn-circle-view { background: rgba(var(--brand-color-rgb), 0.1); color: var(--brand-color); border: 1px solid rgba(var(--brand-color-rgb), 0.15); }
     .btn-circle-pdf { background: var(--brand-color); color: #000; }
     .btn-circle-sat { background: rgba(87, 193, 255, 0.1); color: #57c1ff; border: 1px solid rgba(87, 193, 255, 0.2); }
 
@@ -404,8 +557,8 @@
       .btn-circle:hover {
         transform: translateY(-2px) scale(1.25);
       }
-      .btn-circle-view:hover { box-shadow: 0 4px 12px rgba(188, 111, 241, 0.2); }
-      .btn-circle-pdf:hover { box-shadow: 0 4px 12px rgba(188, 111, 241, 0.4); }
+      .btn-circle-view:hover { box-shadow: 0 4px 12px rgba(var(--brand-color-rgb), 0.2); }
+      .btn-circle-pdf:hover { box-shadow: 0 4px 12px rgba(var(--brand-color-rgb), 0.4); }
       .btn-circle-sat:hover { box-shadow: 0 4px 12px rgba(87, 193, 255, 0.2); }
     }
 
