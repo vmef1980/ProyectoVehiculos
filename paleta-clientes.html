@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Paleta de colores | Portal de Documentación Vehicular</title>
+<title>Elige tu paleta de colores | TECH®</title>
+<link rel="icon" type="image/x-icon" href="img/Tech-v1.ico">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 <style>
@@ -12,6 +13,8 @@
     background:#08080a; color:#fff; padding: 2.5rem 1.5rem 4rem 1.5rem;
   }
   .page-header { max-width: 1100px; margin: 0 auto 2.5rem auto; text-align:center; }
+  .page-logo { width:150px; margin:0 auto 1.4rem auto; color:#BC6FF1; }
+  .page-logo svg { width:100%; height:auto; display:block; }
   .page-header h1 { font-size:1.6rem; font-weight:800; margin-bottom:0.5rem; }
   .page-header p { color:#a1a1aa; font-size:0.9rem; }
   .gallery {
@@ -62,19 +65,32 @@
     margin-bottom:6px; background:#0d0d0f; border-radius:8px; padding:6px 10px;
   }
   .code-row code { font-size:0.7rem; color:#d4d4d8; font-family: monospace; }
-  .copy-btn {
-    background:rgba(255,255,255,0.06); border:none; color:#fff;
-    font-size:0.62rem; font-weight:700; padding:4px 8px; border-radius:6px; cursor:pointer;
+  .choose-btn {
+    width:100%; background:#10B981; border:none; color:#000;
+    font-size:0.78rem; font-weight:800; padding:10px 12px; border-radius:10px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:6px;
   }
-  .copy-btn:active { transform:scale(0.95); }
-  .copy-btn.copied { background:#10B981; color:#000; }
+  .choose-btn:active { transform:scale(0.97); }
+  .page-footer { text-align:center; margin-top:3rem; color:#71717a; font-size:0.75rem; }
+  .page-footer strong { color:#BC6FF1; }
 </style>
 </head>
 <body>
 
   <div class="page-header">
-    <h1>Paleta de colores para clientes</h1>
-    <p>15 combinaciones listas para usar en las columnas "color" y "fondo" de tu Google Sheet</p>
+    <div class="page-logo"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 90" fill="none">
+  <g stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M50 20 L34 20 L14 38" />
+    <circle cx="60" cy="20" r="11" fill="none" />
+    <path d="M48 45 L14 45" />
+    <circle cx="60" cy="45" r="11" fill="none" />
+    <path d="M50 70 L34 70 L14 52" />
+    <circle cx="60" cy="70" r="11" fill="none" />
+  </g>
+  <text x="96" y="62" font-family="'Plus Jakarta Sans', Arial, sans-serif" font-weight="800" font-size="48" letter-spacing="1" fill="currentColor">TECH</text>
+</svg></div>
+    <h1>Elige la paleta de colores para tu portal</h1>
+    <p>Selecciona el estilo que más te guste y avísanos por WhatsApp para aplicarlo a tu portal de documentos.</p>
   </div>
 
   <div class="gallery">
@@ -104,14 +120,7 @@
           <span class="dot" style="background:#BC6FF1;"></span>
           <strong>Morado neón</strong>
         </div>
-        <div class="code-row">
-          <code>color: #BC6FF1</code>
-          <button class="copy-btn" onclick="copyText('#BC6FF1', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #0b0b0c</code>
-          <button class="copy-btn" onclick="copyText('#0b0b0c', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Morado neón', '#BC6FF1', '#0b0b0c')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -139,14 +148,7 @@
           <span class="dot" style="background:#3B82F6;"></span>
           <strong>Azul tech</strong>
         </div>
-        <div class="code-row">
-          <code>color: #3B82F6</code>
-          <button class="copy-btn" onclick="copyText('#3B82F6', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #0a0e14</code>
-          <button class="copy-btn" onclick="copyText('#0a0e14', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Azul tech', '#3B82F6', '#0a0e14')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -174,14 +176,7 @@
           <span class="dot" style="background:#10B981;"></span>
           <strong>Verde esmeralda</strong>
         </div>
-        <div class="code-row">
-          <code>color: #10B981</code>
-          <button class="copy-btn" onclick="copyText('#10B981', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #0a0f0c</code>
-          <button class="copy-btn" onclick="copyText('#0a0f0c', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Verde esmeralda', '#10B981', '#0a0f0c')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -209,14 +204,7 @@
           <span class="dot" style="background:#F59E0B;"></span>
           <strong>Ámbar dorado</strong>
         </div>
-        <div class="code-row">
-          <code>color: #F59E0B</code>
-          <button class="copy-btn" onclick="copyText('#F59E0B', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #120e08</code>
-          <button class="copy-btn" onclick="copyText('#120e08', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Ámbar dorado', '#F59E0B', '#120e08')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -244,14 +232,7 @@
           <span class="dot" style="background:#06B6D4;"></span>
           <strong>Cian eléctrico</strong>
         </div>
-        <div class="code-row">
-          <code>color: #06B6D4</code>
-          <button class="copy-btn" onclick="copyText('#06B6D4', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #081112</code>
-          <button class="copy-btn" onclick="copyText('#081112', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Cian eléctrico', '#06B6D4', '#081112')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -279,14 +260,7 @@
           <span class="dot" style="background:#F43F5E;"></span>
           <strong>Rojo coral</strong>
         </div>
-        <div class="code-row">
-          <code>color: #F43F5E</code>
-          <button class="copy-btn" onclick="copyText('#F43F5E', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #140a0c</code>
-          <button class="copy-btn" onclick="copyText('#140a0c', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Rojo coral', '#F43F5E', '#140a0c')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -314,14 +288,7 @@
           <span class="dot" style="background:#EC4899;"></span>
           <strong>Rosa magenta</strong>
         </div>
-        <div class="code-row">
-          <code>color: #EC4899</code>
-          <button class="copy-btn" onclick="copyText('#EC4899', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #130a10</code>
-          <button class="copy-btn" onclick="copyText('#130a10', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Rosa magenta', '#EC4899', '#130a10')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -349,14 +316,7 @@
           <span class="dot" style="background:#8B5CF6;"></span>
           <strong>Violeta real</strong>
         </div>
-        <div class="code-row">
-          <code>color: #8B5CF6</code>
-          <button class="copy-btn" onclick="copyText('#8B5CF6', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #0d0a14</code>
-          <button class="copy-btn" onclick="copyText('#0d0a14', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Violeta real', '#8B5CF6', '#0d0a14')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -384,14 +344,7 @@
           <span class="dot" style="background:#14B8A6;"></span>
           <strong>Turquesa</strong>
         </div>
-        <div class="code-row">
-          <code>color: #14B8A6</code>
-          <button class="copy-btn" onclick="copyText('#14B8A6', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #081210</code>
-          <button class="copy-btn" onclick="copyText('#081210', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Turquesa', '#14B8A6', '#081210')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -419,14 +372,7 @@
           <span class="dot" style="background:#FB923C;"></span>
           <strong>Naranja vivo</strong>
         </div>
-        <div class="code-row">
-          <code>color: #FB923C</code>
-          <button class="copy-btn" onclick="copyText('#FB923C', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #140e08</code>
-          <button class="copy-btn" onclick="copyText('#140e08', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Naranja vivo', '#FB923C', '#140e08')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -454,14 +400,7 @@
           <span class="dot" style="background:#A3E635;"></span>
           <strong>Lima eléctrico</strong>
         </div>
-        <div class="code-row">
-          <code>color: #A3E635</code>
-          <button class="copy-btn" onclick="copyText('#A3E635', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #0e1208</code>
-          <button class="copy-btn" onclick="copyText('#0e1208', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Lima eléctrico', '#A3E635', '#0e1208')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -489,14 +428,7 @@
           <span class="dot" style="background:#38BDF8;"></span>
           <strong>Azul cielo</strong>
         </div>
-        <div class="code-row">
-          <code>color: #38BDF8</code>
-          <button class="copy-btn" onclick="copyText('#38BDF8', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #080f14</code>
-          <button class="copy-btn" onclick="copyText('#080f14', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Azul cielo', '#38BDF8', '#080f14')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -524,14 +456,7 @@
           <span class="dot" style="background:#D946EF;"></span>
           <strong>Fucsia</strong>
         </div>
-        <div class="code-row">
-          <code>color: #D946EF</code>
-          <button class="copy-btn" onclick="copyText('#D946EF', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #120a14</code>
-          <button class="copy-btn" onclick="copyText('#120a14', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Fucsia', '#D946EF', '#120a14')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -559,14 +484,7 @@
           <span class="dot" style="background:#22C55E;"></span>
           <strong>Esmeralda oscuro</strong>
         </div>
-        <div class="code-row">
-          <code>color: #22C55E</code>
-          <button class="copy-btn" onclick="copyText('#22C55E', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #081208</code>
-          <button class="copy-btn" onclick="copyText('#081208', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Esmeralda oscuro', '#22C55E', '#081208')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
     <div class="palette-card">
@@ -594,26 +512,21 @@
           <span class="dot" style="background:#6366F1;"></span>
           <strong>Índigo</strong>
         </div>
-        <div class="code-row">
-          <code>color: #6366F1</code>
-          <button class="copy-btn" onclick="copyText('#6366F1', this)">Copiar</button>
-        </div>
-        <div class="code-row">
-          <code>fondo: #0a0a14</code>
-          <button class="copy-btn" onclick="copyText('#0a0a14', this)">Copiar</button>
-        </div>
+        <button class="choose-btn" onclick="elegirPaleta('Índigo', '#6366F1', '#0a0a14')"><i class="bi bi-whatsapp"></i> Elegir esta paleta</button>
       </div>
     </div>
   </div>
 
+  <div class="page-footer">
+    <strong>TECH® | RdeG | 2026</strong>
+  </div>
+
 <script>
-function copyText(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    const original = btn.textContent;
-    btn.textContent = "Copiado";
-    btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1200);
-  });
+const WA_PHONE = "50241084481";
+function elegirPaleta(nombre, color, fondo) {
+  const msg = `Hola TECH®, me gusta la paleta "${nombre}" para mi portal de documentos. (color: ${color} / fondo: ${fondo})`;
+  const url = `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
 }
 </script>
 

@@ -278,6 +278,27 @@
       transform: scale(0.90);
     }
 
+    .app-loader {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-main);
+      z-index: 100000;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+    .app-loader p { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
+    .app-loader-spinner {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      border: 3px solid rgba(var(--brand-color-rgb), 0.2);
+      border-top-color: var(--brand-color);
+      animation: appLoaderSpin 0.8s linear infinite;
+    }
+    @keyframes appLoaderSpin { to { transform: rotate(360deg); } }
+
     .sticky-selector-bar {
       padding: 0.5rem 1.2rem 1rem 1.2rem;
       background: var(--bg-main);
@@ -513,6 +534,13 @@
       background: rgba(255, 255, 255, 0.01);
     }
     .owner-label { color: var(--text-gray); font-weight: 500; font-size: 0.8rem; }
+    .plate-group { display: flex; align-items: center; gap: 8px; }
+    .plate-type-badge {
+      font-size: 0.65rem; font-weight: 700; color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-color);
+      padding: 0.35rem 0.55rem; border-radius: 6px; text-transform: uppercase;
+      letter-spacing: 0.03em; white-space: nowrap;
+    }
     .plate-display { 
       background: rgba(255, 255, 255, 0.06); color: var(--brand-color); padding: 0.4rem 1rem; border-radius: 8px; 
       font-size: 1.1rem; font-weight: 800; border: 1px solid rgba(255, 255, 255, 0.05);
@@ -609,3 +637,20 @@
     }
 
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* En pantallas angostas el selector de vehículo y el botón de subir
+       documentos ya no caben cómodamente en una sola fila: se apilan
+       para que el botón deje de invadir el combobox. */
+    @media (max-width: 480px) {
+      .sticky-selector-bar {
+        flex-wrap: wrap;
+      }
+      .selector-container {
+        flex: 1 1 100%;
+        width: 100%;
+      }
+      .btn-upload-toggle {
+        flex: 1 1 100%;
+        justify-content: center;
+      }
+    }

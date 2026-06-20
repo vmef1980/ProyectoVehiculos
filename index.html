@@ -6,6 +6,10 @@
   <title>Portal de Documentación Vehicular | Tech Mobile Pro</title>
   
   <link rel="icon" type="image/x-icon" href="img/Tech-v1.ico">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   
@@ -14,6 +18,13 @@
   <script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </head>
 <body onselectstart="return false;" ondragstart="return false;">
+
+  <!-- Loader visible mientras se cargan los datos del cliente (logo + CSV) -->
+  <div id="appLoader" class="app-loader">
+    <div class="app-loader-spinner"></div>
+    <p>Cargando tu expediente...</p>
+  </div>
+
 
   <div id="pinScreen" class="pin-screen">
     <div class="pin-container">

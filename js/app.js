@@ -15,6 +15,33 @@
     let globalStructure = {};
     let globalIdURL = "";
 
+    // Catálogo de tipos de placa de Guatemala, según el prefijo de letras.
+    const PLATE_TYPES = {
+      P:   { label: "Particular",  desc: "Vehículo privado de uso personal" },
+      A:   { label: "Alquiler",    desc: "Vehículo de alquiler (taxi, transporte por tarifa)" },
+      C:   { label: "Comercial",   desc: "Transporte extraurbano de personas, carga y escolar; vehículo de empresa" },
+      U:   { label: "Urbano",      desc: "Transporte público urbano colectivo (bus urbano)" },
+      M:   { label: "Motocicleta", desc: "Motocicleta o ciclomotor (placa reducida)" },
+      MT:  { label: "Mototaxi",    desc: "Vehículo de tres ruedas para transporte público" },
+      TC:  { label: "Remolque",    desc: "Remolque o semirremolque (vehículo de arrastre)" },
+      TCR: { label: "Tractor",     desc: "Tractor agrícola, industrial o de construcción" },
+      TE:  { label: "Extraurbano", desc: "Transporte extraurbano de pasajeros o carga" },
+      O:   { label: "Oficial",     desc: "Vehículo del Estado" },
+      CD:  { label: "Diplomático", desc: "Misión diplomática o funcionario" },
+      CC:  { label: "Consular",    desc: "Misión consular" },
+      MI:  { label: "Misión Int.", desc: "Organismo internacional u ONG extranjera" },
+      DIS: { label: "Distribuidor",desc: "Placa de distribuidor" }
+    };
+
+    // Extrae el prefijo de letras de la placa (ej. "P123ABC" -> "P",
+    // "MT1234" -> "MT") y lo busca en el catálogo de tipos.
+    function getPlateTypeInfo(placa) {
+      if (!placa) return null;
+      const match = placa.trim().toUpperCase().match(/^[A-Z]+/);
+      if (!match) return null;
+      return PLATE_TYPES[match[0]] || null;
+    }
+
     function hexToRgb(hex) {
       if (!hex) return null;
       hex = hex.trim().replace('#', '');
@@ -44,9 +71,12 @@
 
     async function init() {
       try {
+        // Mostrar la página de inmediato con un loader, en lugar de
+        // dejar la pantalla en blanco mientras se cargan los datos.
+        showLoadingScreen();
+
         document.getElementById('portal-title').textContent = CONFIG.title;
-        await loadInlineLogo();
-        
+
         document.getElementById('footer-brand').textContent = CONFIG.brand;
         
         // Renderizado dinámico de la versión desde el objeto CONFIG
@@ -67,7 +97,12 @@
           return;
         }
 
-        const response = await fetch(CONFIG.csvUrl);
+        // El logo y el CSV no dependen uno del otro: se piden en paralelo
+        // en lugar de uno después del otro, lo que reduce el tiempo de carga a la mitad.
+        const [, response] = await Promise.all([
+          loadInlineLogo(),
+          fetch(CONFIG.csvUrl)
+        ]);
         if (!response.ok) throw new Error("Error de Red");
         
         const text = await response.text();
@@ -106,6 +141,7 @@
           });
         });
 
+        hideLoadingScreen();
         const pinScreen = document.getElementById('pinScreen');
         
         if (sessionStorage.getItem(`auth_${globalIdURL}`) === 'true' || targetPin === "") {
@@ -126,7 +162,19 @@
       }
     }
 
+    function showLoadingScreen() {
+      document.body.style.display = "block";
+      const loader = document.getElementById('appLoader');
+      if (loader) loader.style.display = "flex";
+    }
+
+    function hideLoadingScreen() {
+      const loader = document.getElementById('appLoader');
+      if (loader) loader.style.display = "none";
+    }
+
     function showErrorMessage(title, subtitle) {
+      hideLoadingScreen();
       const pinScreen = document.getElementById('pinScreen');
       if (pinScreen) pinScreen.style.display = "none";
       
@@ -291,10 +339,17 @@
           const sec = document.createElement('section');
           sec.id = `view-${placa}`;
           sec.className = 'vehicle-section';
+          const typeInfo = getPlateTypeInfo(placa);
+          const typeBadgeHtml = typeInfo
+            ? `<span class="plate-type-badge" title="${typeInfo.desc}">${typeInfo.label}</span>`
+            : '';
           sec.innerHTML = `
             <div class="info-header">
               <span class="owner-label">ID: ${id}</span>
-              <div class="plate-display">${placa}</div>
+              <div class="plate-group">
+                ${typeBadgeHtml}
+                <div class="plate-display">${placa}</div>
+              </div>
             </div>
             <div class="document-list">${docs.map(doc => `
               <div class="document-item">
