@@ -6,12 +6,44 @@
       logo: "img/Tech-logo.svg",
       phone: "50241084481",
       waMsg: "Hola TECH®, solicito soporte para el ID: ",
-      waCommercialMsg: "Hola TECH®, deseo información de sus productos. Vengo de la aplicación de Gestión Documental Vehicular.",
-      csvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZah1DN6oRs_TNYw_dScsbpDmG9PL_hxVaVWZfzejdGTNzkaIw8BhJSBVp6ygnejLr1lRUFUGfMRSu/pub?output=csv"
+      waCommercialMsg: "Hola TECH®, deseo información de sus productos. Vengo de la aplicación de Gestión Documental Vehicular."
+      // NOTA: el antiguo "csvUrl" (CSV publicado del Google Sheet) se eliminó
+      // a propósito. Ese CSV exponía en el navegador el PIN y los documentos
+      // de TODOS los clientes, no solo del que abría el portal. Ahora esos
+      // datos solo salen del servidor (Apps Script) después de un login
+      // válido. Recuerda ir a tu Google Sheet > Archivo > Compartir >
+      // "Publicar en la web" y DESPUBLICAR ese CSV, ya no se usa y sigue
+      // siendo un riesgo mientras siga publicado.
     };
 
+    // ==========================================
+    // NOVEDADES DEL SISTEMA
+    // Agrega aquí cada actualización nueva (la más reciente primero).
+    // El badge rojo en la campana se muestra si hay novedades más
+    // nuevas que la última que el cliente ya vio (guardado en su navegador).
+    // ==========================================
+    const SYSTEM_NEWS = [
+      {
+        date: "2026-07-22",
+        icon: "bi-shield-lock-fill",
+        title: "Contraseña más segura",
+        desc: "Ahora puedes usar una contraseña de hasta 16 caracteres, combinando letras, números y símbolos, en lugar del PIN numérico corto."
+      },
+      {
+        date: "2026-07-22",
+        icon: "bi-key-fill",
+        title: "Cambia tu contraseña tú mismo",
+        desc: "Agregamos un apartado para que actualices tu propia contraseña de acceso al portal, sin depender de soporte."
+      },
+      {
+        date: "2026-07-22",
+        icon: "bi-bell-fill",
+        title: "Nuevo apartado de Novedades",
+        desc: "Este panel donde estás leyendo ahora: aquí publicaremos cada mejora que hagamos al portal."
+      }
+    ];
+
     let currentRotation = 0;
-    let targetPin = ""; 
     let globalStructure = {};
     let globalIdURL = "";
 
@@ -71,15 +103,10 @@
 
     async function init() {
       try {
-        // Mostrar la página de inmediato con un loader, en lugar de
-        // dejar la pantalla en blanco mientras se cargan los datos.
         showLoadingScreen();
 
         document.getElementById('portal-title').textContent = CONFIG.title;
-
         document.getElementById('footer-brand').textContent = CONFIG.brand;
-        
-        // Renderizado dinámico de la versión desde el objeto CONFIG
         document.getElementById('footer-version-label').textContent = `PORTAL OFICIAL | ${CONFIG.version}`;
 
         const params = new URLSearchParams(window.location.search);
@@ -87,67 +114,42 @@
 
         const supportUrl = `https://wa.me/${CONFIG.phone}?text=${encodeURIComponent(CONFIG.waMsg + (globalIdURL || "Desconocido"))}`;
         const commercialUrl = `https://wa.me/${CONFIG.phone}?text=${encodeURIComponent(CONFIG.waCommercialMsg)}`;
-        
-        if(document.getElementById('pin-wa-link')) document.getElementById('pin-wa-link').href = supportUrl;
-        if(document.getElementById('wa-link')) document.getElementById('wa-link').href = supportUrl;
-        if(document.getElementById('commercial-wa-link')) document.getElementById('commercial-wa-link').href = commercialUrl;
+        if (document.getElementById('pin-wa-link')) document.getElementById('pin-wa-link').href = supportUrl;
+        if (document.getElementById('wa-link')) document.getElementById('wa-link').href = supportUrl;
+        if (document.getElementById('commercial-wa-link')) document.getElementById('commercial-wa-link').href = commercialUrl;
 
         if (!globalIdURL) {
           showErrorMessage("ID Requerido", "Por favor, utiliza un enlace con un ID de cliente válido.");
           return;
         }
 
-        // El logo y el CSV no dependen uno del otro: se piden en paralelo
-        // en lugar de uno después del otro, lo que reduce el tiempo de carga a la mitad.
-        const [, response] = await Promise.all([
+        const storedToken = sessionStorage.getItem(sessionTokenKey(globalIdURL));
+
+        // El logo (estático, igual para todos) y el theming/sesión de ESTE
+        // cliente se piden en paralelo. A diferencia de la versión anterior,
+        // aquí NUNCA se descarga la información de otros clientes: cada
+        // llamada al backend solo puede devolver los datos del "id" que
+        // se envía, y el backend valida quién tiene derecho a verlos.
+        const [, brandingResult, sessionResult] = await Promise.all([
           loadInlineLogo(),
-          fetch(CONFIG.csvUrl)
+          fetchBranding(globalIdURL),
+          storedToken ? resumeSession(globalIdURL, storedToken) : Promise.resolve(null)
         ]);
-        if (!response.ok) throw new Error("Error de Red");
-        
-        const text = await response.text();
-        const rows = csvToJSON(text);
-        
-        const clientRows = rows.filter(r => r.id && r.id.trim().toUpperCase() === globalIdURL.toUpperCase());
 
-        if (clientRows.length === 0) {
-          showErrorMessage("No Registrado", `El ID "${globalIdURL}" no se encuentra en el sistema.`);
-          return;
+        if (brandingResult && brandingResult.success) {
+          applyBrandTheme(brandingResult.color, brandingResult.fondo);
         }
-
-        targetPin = clientRows[0].pin ? clientRows[0].pin.trim() : "";
-        
-        const root = document.documentElement;
-        if (clientRows[0].color) {
-          root.style.setProperty('--brand-color', clientRows[0].color);
-          const rgb = hexToRgb(clientRows[0].color);
-          if (rgb) root.style.setProperty('--brand-color-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
-        }
-        if (clientRows[0].fondo) root.style.setProperty('--bg-main', clientRows[0].fondo);
-
-        globalStructure = {}; 
-        clientRows.forEach(row => {
-          const prop = row.propietario || "Información General";
-          const placa = row.placa || "S/P";
-          if (!globalStructure[prop]) globalStructure[prop] = {};
-          if (!globalStructure[prop][placa]) globalStructure[prop][placa] = [];
-          
-          globalStructure[prop][placa].push({
-            nombre: row.nombredoc || "Documento",
-            img: row.urlimagen || "",
-            pdf: row.urlpdf || "#",
-            sat: row.urlsat || "#",
-            icon: row.icono || 'bi-file-earmark-text'
-          });
-        });
 
         hideLoadingScreen();
         const pinScreen = document.getElementById('pinScreen');
-        
-        if (sessionStorage.getItem(`auth_${globalIdURL}`) === 'true' || targetPin === "") {
+
+        if (sessionResult && sessionResult.success) {
+          globalStructure = buildStructureFromRows(sessionResult.rows || []);
+          if (sessionResult.color) applyBrandTheme(sessionResult.color, sessionResult.fondo);
           if (pinScreen) pinScreen.style.display = "none";
           showPortal();
         } else {
+          if (storedToken) sessionStorage.removeItem(sessionTokenKey(globalIdURL));
           if (pinScreen) {
             pinScreen.style.display = "flex";
             document.body.style.display = "block";
@@ -160,6 +162,68 @@
         console.error(e);
         showErrorMessage("Error de Carga", "Hubo problemas de comunicación con la base de datos.");
       }
+    }
+
+    // Trae SOLO el color de marca del cliente (nada sensible), para que la
+    // pantalla de login ya se vea con su identidad antes de autenticarse.
+    async function fetchBranding(id) {
+      try {
+        const resp = await fetch(SECURE_BACKEND_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "branding", clienteId: id })
+        });
+        return await resp.json();
+      } catch (e) {
+        console.error("No se pudo cargar el theming del cliente", e);
+        return null;
+      }
+    }
+
+    // Intenta reanudar sesión con el token guardado en este navegador, sin
+    // volver a pedir la contraseña. El backend valida el token (firma +
+    // expiración) y solo entonces devuelve los documentos de este cliente.
+    async function resumeSession(id, token) {
+      try {
+        const resp = await fetch(SECURE_BACKEND_URL, {
+          method: "POST",
+          body: JSON.stringify({ action: "session", clienteId: id, sessionToken: token })
+        });
+        return await resp.json();
+      } catch (e) {
+        console.error("No se pudo renovar la sesión", e);
+        return null;
+      }
+    }
+
+    function applyBrandTheme(color, fondo) {
+      const root = document.documentElement;
+      if (color) {
+        root.style.setProperty('--brand-color', color);
+        const rgb = hexToRgb(color);
+        if (rgb) root.style.setProperty('--brand-color-rgb', `${rgb.r}, ${rgb.g}, ${rgb.b}`);
+      }
+      if (fondo) root.style.setProperty('--bg-main', fondo);
+    }
+
+    // Reconstruye la estructura propietario > placa > documentos a partir
+    // de las filas que devuelve el backend (mismo formato que antes usaba
+    // el CSV, pero ahora ya vienen filtradas y sin la columna "pin").
+    function buildStructureFromRows(rows) {
+      const structure = {};
+      rows.forEach(row => {
+        const prop = row.propietario || "Información General";
+        const placa = row.placa || "S/P";
+        if (!structure[prop]) structure[prop] = {};
+        if (!structure[prop][placa]) structure[prop][placa] = [];
+        structure[prop][placa].push({
+          nombre: row.nombredoc || "Documento",
+          img: row.urlimagen || "",
+          pdf: row.urlpdf || "#",
+          sat: row.urlsat || "#",
+          icon: row.icono || 'bi-file-earmark-text'
+        });
+      });
+      return structure;
     }
 
     function showLoadingScreen() {
@@ -186,12 +250,30 @@
       document.body.style.display = "block";
     }
 
-    const CAPTCHA_VERIFY_URL = "https://script.google.com/macros/s/AKfycbzYLC0_gw-Wf59mkPlxo272TsVk1NxfkynmwRfyFaHSJRoOjrnCiUWdkTYQ7pQDLwm1/exec";
     const UPLOAD_DOCS_URL = "https://script.google.com/macros/s/AKfycbwCcsxBDJxWKPnKmybNXQ9K-969jWOwQ2sJmbhPHf-aoR75z4mZ-BiDk8BrXrLXs5Pu/exec";
+
+    // ÚNICO endpoint nuevo: reemplaza a CAPTCHA_VERIFY_URL y al anterior
+    // CHANGE_PASSWORD_URL. Maneja login, renovación de sesión, branding
+    // pública (solo color) y cambio de contraseña. Ver "secure_backend.gs".
+    // TODO: reemplaza esta URL por la de tu propio despliegue.
+    const SECURE_BACKEND_URL = "https://script.google.com/macros/s/AKfycbxjiCEK66yMyW5Kav5pqbgwwUzEp01kLQvs1KI19P5zLXnFNI4Yz6FsRszfMKpdSxFM/exec";
+
+    // Clave de sessionStorage donde se guarda el token de sesión (no la
+    // contraseña) del cliente actual, para no pedir login en cada recarga.
+    function sessionTokenKey(id) { return `sessionToken_${id}`; }
 
     function clearError() {
       const errorDiv = document.getElementById('pinError');
       if (errorDiv) errorDiv.style.display = 'none';
+    }
+
+    function togglePinVisibility() {
+      const input = document.getElementById('pinInput');
+      const icon = document.getElementById('pinVisibilityIcon');
+      if (!input || !icon) return;
+      const isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      icon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
     }
 
     async function verifyPin() {
@@ -199,10 +281,10 @@
       const errorDiv = document.getElementById('pinError');
       if (!inputEv) return;
 
-      const pinIngresado = inputEv.value.trim();
-      if (!pinIngresado) {
+      const passwordIngresada = inputEv.value.trim();
+      if (!passwordIngresada) {
         if (errorDiv) {
-          errorDiv.textContent = "Por favor ingresa tu PIN de acceso.";
+          errorDiv.textContent = "Por favor ingresa tu contraseña de acceso.";
           errorDiv.style.display = "block";
         }
         return;
@@ -221,61 +303,64 @@
       if (unlockBtn) { unlockBtn.disabled = true; unlockBtn.textContent = "Verificando..."; }
 
       try {
-        const resp = await fetch(CAPTCHA_VERIFY_URL, {
+        // Un solo llamado al servidor: valida el captcha Y la contraseña,
+        // y solo si ambos son correctos devuelve los documentos de ESTE
+        // cliente (nunca los de los demás).
+        const resp = await fetch(SECURE_BACKEND_URL, {
           method: "POST",
-          body: JSON.stringify({ token: captchaToken })
+          body: JSON.stringify({
+            action: "login",
+            clienteId: globalIdURL,
+            password: passwordIngresada,
+            captchaToken: captchaToken
+          })
         });
         const data = await resp.json();
 
-        if (!data.success) {
-          if (errorDiv) {
-            errorDiv.textContent = "Verificación de seguridad inválida. Recuerda actualizar tu Clave Secreta en Google Apps Script.";
-            errorDiv.style.display = "block";
+        if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
+
+        if (data.success) {
+          if (data.sessionToken) {
+            sessionStorage.setItem(sessionTokenKey(globalIdURL), data.sessionToken);
           }
+          globalStructure = buildStructureFromRows(data.rows || []);
+          if (data.color) applyBrandTheme(data.color, data.fondo);
+
+          const pinScreen = document.getElementById('pinScreen');
+          if (pinScreen) {
+            pinScreen.style.transition = "opacity 0.3s ease";
+            pinScreen.style.opacity = "0";
+            setTimeout(() => {
+              pinScreen.style.display = "none";
+              showPortal();
+            }, 300);
+          } else {
+            showPortal();
+          }
+        } else {
+          if (errorDiv) {
+            errorDiv.textContent = data.message || "La contraseña ingresada es incorrecta. Inténtalo de nuevo.";
+            errorDiv.style.display = "block";
+            inputEv.style.animation = 'shake 0.3s ease';
+            setTimeout(() => { inputEv.style.animation = ''; }, 300);
+          }
+          inputEv.value = "";
+          inputEv.focus();
           if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
-          if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
-          return;
         }
       } catch (err) {
         console.error(err);
         if (errorDiv) {
-          errorDiv.textContent = "Error al conectar con el servidor de seguridad. Revisa tu conexión.";
+          errorDiv.textContent = "Error al conectar con el servidor. Revisa tu conexión.";
           errorDiv.style.display = "block";
         }
         if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
-        return;
-      }
-
-      if (unlockBtn) { unlockBtn.disabled = false; unlockBtn.textContent = "Ingresar"; }
-
-      if (pinIngresado === targetPin) {
-        sessionStorage.setItem(`auth_${globalIdURL}`, 'true');
-        const pinScreen = document.getElementById('pinScreen');
-        if (pinScreen) {
-          pinScreen.style.transition = "opacity 0.3s ease";
-          pinScreen.style.opacity = "0";
-          setTimeout(() => {
-            pinScreen.style.display = "none";
-            showPortal();
-          }, 300);
-        } else {
-          showPortal();
-        }
-      } else {
-        if (errorDiv) {
-          errorDiv.textContent = "El PIN ingresado es incorrecto. Inténtalo de nuevo.";
-          errorDiv.style.display = "block";
-          inputEv.style.animation = 'shake 0.3s ease';
-          setTimeout(() => { inputEv.style.animation = ''; }, 300);
-        }
-        inputEv.value = "";
-        inputEv.focus();
         if (typeof grecaptcha !== 'undefined') grecaptcha.reset();
       }
     }
 
     function logout() {
-      sessionStorage.removeItem(`auth_${globalIdURL}`);
+      sessionStorage.removeItem(sessionTokenKey(globalIdURL));
       window.location.reload();
     }
 
@@ -283,6 +368,9 @@
       renderPortal(globalStructure, globalIdURL);
     }
 
+    // NOTA: ya no se usa en el flujo principal (el CSV público se eliminó,
+    // ver comentario en CONFIG). Se deja por si en otro lado del proyecto
+    // se sigue necesitando convertir un CSV a JSON.
     function csvToJSON(csv) {
       const lines = csv.split(/\r?\n/);
       const result = [];
@@ -579,4 +667,164 @@
       if (submitBtn) { submitBtn.disabled = false; }
     }
 
+    // ==========================================
+    // PANEL DE NOVEDADES DEL SISTEMA
+    // ==========================================
+
+    function renderNews() {
+      const list = document.getElementById('newsList');
+      if (!list) return;
+
+      if (!SYSTEM_NEWS || SYSTEM_NEWS.length === 0) {
+        list.innerHTML = `<div class="news-empty">Aún no hay novedades publicadas.</div>`;
+        return;
+      }
+
+      const sorted = [...SYSTEM_NEWS].sort((a, b) => new Date(b.date) - new Date(a.date));
+      list.innerHTML = sorted.map(item => `
+        <div class="news-item">
+          <div class="news-item-header">
+            <span class="news-title"><i class="bi ${item.icon || 'bi-stars'}"></i> ${item.title}</span>
+            <span class="news-date">${formatNewsDate(item.date)}</span>
+          </div>
+          <div class="news-desc">${item.desc}</div>
+        </div>`).join('');
+    }
+
+    function formatNewsDate(isoDate) {
+      try {
+        const d = new Date(isoDate + 'T00:00:00');
+        return d.toLocaleDateString('es-GT', { day: '2-digit', month: 'short', year: 'numeric' });
+      } catch (e) {
+        return isoDate;
+      }
+    }
+
+    function toggleNewsPanel() {
+      const panel = document.getElementById('newsPanel');
+      if (!panel) return;
+      const isOpen = panel.style.display === 'flex';
+      if (isOpen) {
+        panel.style.display = 'none';
+      } else {
+        renderNews();
+        panel.style.display = 'flex';
+        markNewsAsSeen();
+      }
+    }
+
+    function getLatestNewsDate() {
+      if (!SYSTEM_NEWS || SYSTEM_NEWS.length === 0) return null;
+      return SYSTEM_NEWS.reduce((latest, item) => (item.date > latest ? item.date : latest), SYSTEM_NEWS[0].date);
+    }
+
+    function checkUnseenNews() {
+      const badge = document.getElementById('newsBadge');
+      if (!badge) return;
+      const latest = getLatestNewsDate();
+      if (!latest) { badge.style.display = 'none'; return; }
+      const lastSeen = localStorage.getItem('lastSeenNewsDate');
+      badge.style.display = (!lastSeen || lastSeen < latest) ? 'block' : 'none';
+    }
+
+    function markNewsAsSeen() {
+      const latest = getLatestNewsDate();
+      if (latest) localStorage.setItem('lastSeenNewsDate', latest);
+      const badge = document.getElementById('newsBadge');
+      if (badge) badge.style.display = 'none';
+    }
+
+    // ==========================================
+    // PANEL DE CAMBIO DE CONTRASEÑA
+    // ==========================================
+
+    function toggleChangePasswordPanel() {
+      const panel = document.getElementById('changePasswordPanel');
+      if (!panel) return;
+      const isOpen = panel.style.display === 'flex';
+      if (isOpen) {
+        panel.style.display = 'none';
+      } else {
+        ['currentPasswordInput', 'newPasswordInput', 'confirmPasswordInput'].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = '';
+        });
+        const statusDiv = document.getElementById('changePasswordStatus');
+        if (statusDiv) { statusDiv.textContent = ''; statusDiv.className = 'upload-status'; }
+        panel.style.display = 'flex';
+      }
+    }
+
+    async function submitPasswordChange() {
+      const currentInput = document.getElementById('currentPasswordInput');
+      const newInput = document.getElementById('newPasswordInput');
+      const confirmInput = document.getElementById('confirmPasswordInput');
+      const statusDiv = document.getElementById('changePasswordStatus');
+      const submitBtn = document.querySelector('#changePasswordPanel .btn-upload-submit');
+
+      const currentPassword = currentInput ? currentInput.value : '';
+      const newPassword = newInput ? newInput.value : '';
+      const confirmPassword = confirmInput ? confirmInput.value : '';
+
+      statusDiv.className = 'upload-status';
+
+      if (!currentPassword) {
+        statusDiv.textContent = "Ingresa tu contraseña actual.";
+        statusDiv.className = 'upload-status err';
+        return;
+      }
+      // La contraseña actual ya NO se valida aquí en el navegador: el
+      // cliente nunca tiene una copia local de ella (por eso el token de
+      // sesión, no la contraseña, es lo que se guarda). La valida el
+      // servidor y responde con el mensaje de error si no coincide.
+      if (newPassword.length < 4 || newPassword.length > 16) {
+        statusDiv.textContent = "La nueva contraseña debe tener entre 4 y 16 caracteres.";
+        statusDiv.className = 'upload-status err';
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        statusDiv.textContent = "Las contraseñas nuevas no coinciden.";
+        statusDiv.className = 'upload-status err';
+        return;
+      }
+      if (newPassword === currentPassword) {
+        statusDiv.textContent = "La nueva contraseña debe ser distinta a la actual.";
+        statusDiv.className = 'upload-status err';
+        return;
+      }
+
+      if (submitBtn) { submitBtn.disabled = true; }
+      statusDiv.textContent = "Actualizando tu contraseña...";
+      statusDiv.className = 'upload-status loading';
+
+      try {
+        const resp = await fetch(SECURE_BACKEND_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "changePassword",
+            clienteId: globalIdURL,
+            currentPassword: currentPassword,
+            newPassword: newPassword
+          })
+        });
+        const data = await resp.json();
+
+        if (data.success) {
+          statusDiv.textContent = "¡Contraseña actualizada! Vuelve a ingresar la próxima vez con tu nueva contraseña.";
+          statusDiv.className = 'upload-status ok';
+          setTimeout(() => { toggleChangePasswordPanel(); }, 2500);
+        } else {
+          statusDiv.textContent = data.message || "No se pudo actualizar la contraseña. Intenta de nuevo.";
+          statusDiv.className = 'upload-status err';
+        }
+      } catch (err) {
+        console.error(err);
+        statusDiv.textContent = "Error de conexión. Revisa tu internet e intenta de nuevo.";
+        statusDiv.className = 'upload-status err';
+      }
+
+      if (submitBtn) { submitBtn.disabled = false; }
+    }
+
     init();
+    checkUnseenNews();

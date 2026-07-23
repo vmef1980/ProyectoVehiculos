@@ -30,14 +30,18 @@
     <div class="pin-container">
       <div id="pin-logo" class="pin-logo"></div>
       <h2>Acceso Protegido</h2>
-      <p>Introduce tu PIN para visualizar el expediente de documentación vehicular.</p>
+      <p>Introduce tu contraseña para visualizar el expediente de documentación vehicular.</p>
       
       <div class="pin-input-wrapper">
-        <input type="password" id="pinInput" placeholder="••••" maxlength="6" inputmode="numeric" pattern="[0-9]*" oninput="clearError()" onkeydown="if(event.key === 'Enter') verifyPin()">
+        <input type="password" id="pinInput" placeholder="Contraseña" maxlength="16" autocomplete="current-password" oninput="clearError()" onkeydown="if(event.key === 'Enter') verifyPin()">
+        <button type="button" class="btn-toggle-visibility" onclick="togglePinVisibility()" title="Mostrar/Ocultar" aria-label="Mostrar u ocultar contraseña">
+          <i id="pinVisibilityIcon" class="bi bi-eye"></i>
+        </button>
       </div>
 
       <div class="captcha-container">
-        <div class="g-recaptcha" data-sitekey="6Lc2wSMtAAAAADjYdexG-mMQLTXFgnYG4gEFGFGo"></div>
+<!--    <div class="g-recaptcha" data-sitekey="6Lfd7mAtAAAAADUuU9VhdkwXYmPpsEg7wWMAFXT0"></div> <!--DESARROLLO-->
+        <div class="g-recaptcha" data-sitekey="6Lc2wSMtAAAAADjYdexG-mMQLTXFgnYG4gEFGFGo"></div> <!--PRODUCION--> 
       </div>
 
       <button class="btn-unlock" onclick="verifyPin()">Ingresar</button>
@@ -62,7 +66,16 @@
       <div id="header-logo" class="main-logo"></div>
       <h1 id="portal-title"></h1>
     </div>
-    <button class="btn-logout" onclick="logout()" title="Cerrar Sesión / Volver"><i class="bi bi-box-arrow-right"></i></button>
+    <div class="header-actions">
+      <button class="btn-header-icon" onclick="toggleNewsPanel()" title="Novedades del sistema">
+        <i class="bi bi-bell-fill"></i>
+        <span id="newsBadge" class="news-badge" style="display:none;"></span>
+      </button>
+      <button class="btn-header-icon" onclick="toggleChangePasswordPanel()" title="Cambiar mi contraseña">
+        <i class="bi bi-key-fill"></i>
+      </button>
+      <button class="btn-logout" onclick="logout()" title="Cerrar Sesión / Volver"><i class="bi bi-box-arrow-right"></i></button>
+    </div>
   </header>
 
   <div class="sticky-selector-bar">
@@ -110,6 +123,47 @@
     </div>
   </div>
   <!-- ===================== FIN PANEL DE SUBIDA ===================== -->
+
+  <!-- ===================== PANEL DE NOVEDADES DEL SISTEMA ===================== -->
+  <div id="newsPanel" class="upload-panel">
+    <div class="upload-card">
+      <div class="upload-card-header">
+        <h3><i class="bi bi-bell-fill"></i> Novedades del sistema</h3>
+        <button class="btn-close-upload" onclick="toggleNewsPanel()"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <p class="upload-hint">Aquí publicamos las últimas mejoras y actualizaciones de tu portal.</p>
+      <div id="newsList" class="news-list"></div>
+    </div>
+  </div>
+  <!-- ===================== FIN PANEL DE NOVEDADES ===================== -->
+
+  <!-- ===================== PANEL DE CAMBIO DE CONTRASEÑA ===================== -->
+  <div id="changePasswordPanel" class="upload-panel">
+    <div class="upload-card">
+      <div class="upload-card-header">
+        <h3><i class="bi bi-key-fill"></i> Cambiar mi contraseña</h3>
+        <button class="btn-close-upload" onclick="toggleChangePasswordPanel()"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <p class="upload-hint">Tu contraseña debe tener entre 4 y 16 caracteres. Puedes usar letras, números y símbolos.</p>
+
+      <label class="upload-label">Contraseña actual</label>
+      <input type="password" id="currentPasswordInput" class="upload-select" maxlength="16" autocomplete="current-password" placeholder="Contraseña actual">
+
+      <label class="upload-label">Nueva contraseña</label>
+      <input type="password" id="newPasswordInput" class="upload-select" maxlength="16" autocomplete="new-password" placeholder="Nueva contraseña (4-16 caracteres)">
+
+      <label class="upload-label">Confirmar nueva contraseña</label>
+      <input type="password" id="confirmPasswordInput" class="upload-select" maxlength="16" autocomplete="new-password" placeholder="Repite la nueva contraseña">
+
+      <button class="btn-upload-submit" onclick="submitPasswordChange()">
+        <i class="bi bi-check-circle-fill"></i> Actualizar contraseña
+      </button>
+
+      <div id="changePasswordStatus" class="upload-status"></div>
+    </div>
+  </div>
+  <!-- ===================== FIN PANEL DE CAMBIO DE CONTRASEÑA ===================== -->
 
   <main class="main-wrapper">
     <div id="content-area"></div>

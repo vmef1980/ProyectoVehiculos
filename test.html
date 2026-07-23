@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es-GT">
+<head>
+<meta charset="UTF-8">
+<title>Diagnóstico del backend</title>
+<style>
+  body { font-family: monospace; background:#111; color:#eee; padding:2rem; max-width:800px; margin:0 auto; }
+  h1 { font-size:1.1rem; }
+  label { display:block; margin-top:1rem; font-weight:bold; }
+  input, textarea { width:100%; padding:0.6rem; margin-top:0.3rem; background:#222; color:#fff; border:1px solid #444; box-sizing:border-box; }
+  button { margin-top:1rem; padding:0.8rem 1.5rem; background:#BC6FF1; color:#000; border:none; font-weight:bold; cursor:pointer; }
+  pre { white-space: pre-wrap; word-break: break-all; background:#000; padding:1rem; margin-top:1rem; border:1px solid #444; min-height:100px; }
+  .ok { color:#4ade80; } .err { color:#ff4545; }
+</style>
+</head>
+<body>
+  <h1>🔧 Diagnóstico de SECURE_BACKEND_URL</h1>
+  <p>Pega tu URL de Apps Script (termina en <code>/exec</code>) y tu ID de cliente, y prueba cada acción para ver la respuesta EXACTA que da el servidor (aunque no sea JSON válido).</p>
+
+  <label>URL del backend (SECURE_BACKEND_URL)</label>
+  <input id="url" placeholder="https://script.google.com/macros/s/AKfycb.../exec">
+
+  <label>ID de cliente a probar</label>
+  <input id="cid" placeholder="Ej: ABC123">
+
+  <button onclick="test('branding')">Probar acción "branding"</button>
+  <button onclick="test('login')">Probar acción "login" (contraseña: test1234)</button>
+
+  <pre id="out">El resultado aparecerá aquí...</pre>
+
+<script>
+async function test(action) {
+  const url = document.getElementById('url').value.trim();
+  const cid = document.getElementById('cid').value.trim();
+  const out = document.getElementById('out');
+  out.textContent = "Enviando solicitud...";
+  out.className = "";
+
+  if (!url) { out.textContent = "Pega la URL primero."; out.className="err"; return; }
+
+  const payload = action === 'branding'
+    ? { action: 'branding', clienteId: cid }
+    : { action: 'login', clienteId: cid, password: 'test1234', captchaToken: 'FAKE_TOKEN_PARA_PROBAR_CONEXION' };
+
+  try {
+    const resp = await fetch(url, { method: 'POST', body: JSON.stringify(payload) });
+    const text = await resp.text();
+    out.textContent = "HTTP status: " + resp.status + "\n\n--- Respuesta cruda ---\n" + text;
+    out.className = resp.ok ? "ok" : "err";
+    try {
+      JSON.parse(text);
+      out.textContent += "\n\n✅ Es JSON válido.";
+    } catch(e) {
+      out.textContent += "\n\n❌ NO es JSON válido — por eso app.js muestra 'Error al conectar con el servidor'. Lee el texto de arriba: normalmente Google explica ahí el problema (permisos, autorización pendiente, error de código, etc).";
+    }
+  } catch (err) {
+    out.textContent = "Fetch falló por completo (antes de recibir respuesta): " + err.message + "\n\nEsto casi siempre es: URL mal copiada, o el deploy no es accesible.";
+    out.className = "err";
+  }
+}
+</script>
+</body>
+</html>
