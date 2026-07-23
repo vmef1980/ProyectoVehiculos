@@ -256,7 +256,7 @@
     // CHANGE_PASSWORD_URL. Maneja login, renovación de sesión, branding
     // pública (solo color) y cambio de contraseña. Ver "secure_backend.gs".
     // TODO: reemplaza esta URL por la de tu propio despliegue.
-    const SECURE_BACKEND_URL = "https://script.google.com/macros/s/AKfycbxjiCEK66yMyW5Kav5pqbgwwUzEp01kLQvs1KI19P5zLXnFNI4Yz6FsRszfMKpdSxFM/exec";
+    const SECURE_BACKEND_URL = "https://script.google.com/macros/s/AKfycby4C9HGN1py7kirEuR4sCPaqP5x2Afjdj4UmZDUqMJSxEVqxJnIVwImazY4kIzVK3gU/exec";
 
     // Clave de sessionStorage donde se guarda el token de sesión (no la
     // contraseña) del cliente actual, para no pedir login en cada recarga.
