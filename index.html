@@ -197,9 +197,13 @@
 
   <div id="v-modal" class="modal" onclick="closeModal()">
     <span class="close-v" onclick="closeModal()"><i class="bi bi-x-lg"></i></span>
+    <p class="zoom-hint">Pellizca o doble toque para hacer zoom</p>
     <img id="v-modal-img" src="" onclick="event.stopPropagation()">
     <div class="modal-controls">
-        <button class="rotate-btn" onclick="rotateImg(event)"><i class="bi bi-arrow-clockwise"></i> Voltear Imagen</button>
+        <div class="modal-controls-row">
+          <button class="rotate-btn" onclick="rotateImg(event)"><i class="bi bi-arrow-clockwise"></i> Voltear</button>
+          <button class="rotate-btn" id="downloadImgBtn" onclick="downloadCurrentImage(event)"><i class="bi bi-download"></i> Descargar</button>
+        </div>
     </div>
   </div>
 
