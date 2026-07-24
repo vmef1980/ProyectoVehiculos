@@ -2,46 +2,77 @@
     const CONFIG = {
       title: "Documentos Vehiculares",
       brand: "TECH® | RdeG | 2026",
-      version: "v5.0.0",
+      version: "v7.0.0",
       logo: "img/Tech-logo.svg",
       phone: "50241084481",
       waMsg: "Hola TECH®, solicito soporte para el ID: ",
-      waCommercialMsg: "Hola TECH®, deseo información de sus productos. Vengo de la aplicación de Gestión Documental Vehicular."
-      // NOTA: el antiguo "csvUrl" (CSV publicado del Google Sheet) se eliminó
-      // a propósito. Ese CSV exponía en el navegador el PIN y los documentos
-      // de TODOS los clientes, no solo del que abría el portal. Ahora esos
-      // datos solo salen del servidor (Apps Script) después de un login
-      // válido. Recuerda ir a tu Google Sheet > Archivo > Compartir >
-      // "Publicar en la web" y DESPUBLICAR ese CSV, ya no se usa y sigue
-      // siendo un riesgo mientras siga publicado.
+      waCommercialMsg: "Hola TECH®, deseo información de sus productos. Vengo de la aplicación de Gestión Documental Vehicular.",
+      // TODO: reemplaza este valor por el link "Publicar en la web" de la
+      // pestaña "Changelog" de tu Google Sheet (Archivo > Compartir >
+      // Publicar en la web > elige la pestaña "Changelog", NO el documento
+      // completo > formato CSV > Publicar). Es información pública sin
+      // datos de clientes, así que no pasa por el backend seguro.
+      // Columnas esperadas en esa pestaña: version | fecha | titulo | descripcion
+      changelogCsvUrl: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZah1DN6oRs_TNYw_dScsbpDmG9PL_hxVaVWZfzejdGTNzkaIw8BhJSBVp6ygnejLr1lRUFUGfMRSu/pub?gid=97791990&single=true&output=csv"
+      // NOTA: el antiguo "csvUrl" general (CSV de toda la hoja de clientes)
+      // se eliminó a propósito. Ese CSV exponía en el navegador el PIN y
+      // los documentos de TODOS los clientes, no solo del que abría el
+      // portal. Ahora esos datos solo salen del servidor (Apps Script)
+      // después de un login válido. El changelogCsvUrl de arriba es un
+      // caso distinto: son solo notas de versión, sin datos sensibles.
     };
 
     // ==========================================
-    // NOVEDADES DEL SISTEMA
-    // Agrega aquí cada actualización nueva (la más reciente primero).
-    // El badge rojo en la campana se muestra si hay novedades más
-    // nuevas que la última que el cliente ya vio (guardado en su navegador).
+    // NOVEDADES DEL SISTEMA / CHANGELOG
+    // Ya NO se edita aquí. Se carga en runtime desde la pestaña
+    // "Changelog" del Google Sheet (ver fetchChangelog()). Este arreglo
+    // es solo un respaldo para que el panel nunca se vea vacío si todavía
+    // no configuraste changelogCsvUrl o si la carga falla.
     // ==========================================
-    const SYSTEM_NEWS = [
+    const FALLBACK_NEWS = [
       {
-        date: "2026-07-22",
-        icon: "bi-shield-lock-fill",
-        title: "Contraseña más segura",
-        desc: "Ahora puedes usar una contraseña de hasta 16 caracteres, combinando letras, números y símbolos, en lugar del PIN numérico corto."
-      },
-      {
-        date: "2026-07-22",
-        icon: "bi-key-fill",
-        title: "Cambia tu contraseña tú mismo",
-        desc: "Agregamos un apartado para que actualices tu propia contraseña de acceso al portal, sin depender de soporte."
-      },
-      {
-        date: "2026-07-22",
-        icon: "bi-bell-fill",
-        title: "Nuevo apartado de Novedades",
-        desc: "Este panel donde estás leyendo ahora: aquí publicaremos cada mejora que hagamos al portal."
+        version: "v6.0.0",
+        date: "2026-07-24",
+        icon: "bi-clock-history",
+        title: "Bienvenido al historial de novedades",
+        desc: "Publica tus próximas actualizaciones en la pestaña \"Changelog\" de tu Google Sheet y van a aparecer aquí automáticamente, sin tocar código."
       }
     ];
+
+    // Se llena en runtime al cargar el changelog publicado.
+    let SYSTEM_NEWS = FALLBACK_NEWS;
+
+    // Trae el historial de versiones desde la pestaña "Changelog" publicada
+    // como CSV. No requiere login: es información pública sin datos de
+    // clientes. Si falla o no está configurado, se queda con FALLBACK_NEWS.
+    async function fetchChangelog() {
+      if (!CONFIG.changelogCsvUrl || CONFIG.changelogCsvUrl.startsWith("PON_AQUI")) {
+        return;
+      }
+      try {
+        const resp = await fetch(CONFIG.changelogCsvUrl);
+        if (!resp.ok) throw new Error("HTTP " + resp.status);
+        const text = await resp.text();
+        const rows = csvToJSON(text);
+
+        const parsed = rows
+          .filter(r => r.version && r.titulo)
+          .map(r => ({
+            version: r.version.trim(),
+            date: (r.fecha || "").trim(),
+            title: r.titulo.trim(),
+            desc: (r.descripcion || "").trim(),
+            icon: "bi-stars"
+          }));
+
+        if (parsed.length > 0) {
+          parsed.sort((a, b) => new Date(b.date) - new Date(a.date));
+          SYSTEM_NEWS = parsed;
+        }
+      } catch (e) {
+        console.error("No se pudo cargar el changelog, usando respaldo local.", e);
+      }
+    }
 
     let currentRotation = 0;
     let globalStructure = {};
@@ -133,8 +164,16 @@
         const [, brandingResult, sessionResult] = await Promise.all([
           loadInlineLogo(),
           fetchBranding(globalIdURL),
-          storedToken ? resumeSession(globalIdURL, storedToken) : Promise.resolve(null)
+          storedToken ? resumeSession(globalIdURL, storedToken) : Promise.resolve(null),
+          fetchChangelog()
         ]);
+
+        // La versión mostrada en el pie de página ahora sigue a la fila
+        // más reciente del changelog (si está configurado); si no, se
+        // queda con CONFIG.version como respaldo.
+        const latestVersion = (SYSTEM_NEWS[0] && SYSTEM_NEWS[0].version) || CONFIG.version;
+        document.getElementById('footer-version-label').textContent = `PORTAL OFICIAL | ${latestVersion}`;
+        checkUnseenNews();
 
         if (brandingResult && brandingResult.success) {
           applyBrandTheme(brandingResult.color, brandingResult.fondo);
@@ -368,9 +407,10 @@
       renderPortal(globalStructure, globalIdURL);
     }
 
-    // NOTA: ya no se usa en el flujo principal (el CSV público se eliminó,
-    // ver comentario en CONFIG). Se deja por si en otro lado del proyecto
-    // se sigue necesitando convertir un CSV a JSON.
+    // Se usa para parsear el CSV publicado de la pestaña "Changelog"
+    // (ver fetchChangelog). El CSV general de clientes ya no se usa
+    // (ver comentario en CONFIG), pero esta función de conversión sigue
+    // siendo útil para cualquier CSV público que no tenga datos sensibles.
     function csvToJSON(csv) {
       const lines = csv.split(/\r?\n/);
       const result = [];
@@ -484,27 +524,237 @@
       }
     }
 
-    function zoom(src) {
-      currentRotation = 0;
+    // ==========================================
+    // MODAL DE IMAGEN: ZOOM + PANEO + DESCARGA
+    // ==========================================
+    let imgScale = 1;
+    let imgPanX = 0;
+    let imgPanY = 0;
+    const ZOOM_MIN = 1;
+    const ZOOM_MAX = 4;
+    const ZOOM_DOUBLE_TAP = 2.5;
+
+    function updateImgTransform(animate) {
       const img = document.getElementById('v-modal-img');
       if (!img) return;
-      img.src = src; 
-      img.style.transform = `rotate(0deg)`;
-      const modal = document.getElementById('v-modal');
-      if (modal) modal.style.display = 'flex';
+      img.style.transition = animate ? 'transform 0.15s cubic-bezier(0.4, 0, 0.2, 1)' : 'none';
+      img.style.transform = `translate(${imgPanX}px, ${imgPanY}px) rotate(${currentRotation}deg) scale(${imgScale})`;
+      img.classList.toggle('zoomed', imgScale > 1.01);
     }
 
-    function rotateImg(e) { 
-      e.stopPropagation(); 
-      currentRotation += 90; 
+    function clampPan() {
+      // Evita que, al hacer zoom, la imagen se pueda arrastrar muy lejos
+      // fuera de la vista. Límite generoso y simple, no pixel-perfecto.
       const img = document.getElementById('v-modal-img');
-      if (img) img.style.transform = `rotate(${currentRotation}deg)`; 
+      if (!img) return;
+      const maxPan = (imgScale - 1) * (img.clientWidth || 300) * 0.6 + 40;
+      imgPanX = Math.max(-maxPan, Math.min(maxPan, imgPanX));
+      imgPanY = Math.max(-maxPan, Math.min(maxPan, imgPanY));
     }
-    
-    function closeModal() { 
+
+    function zoom(src) {
+      currentRotation = 0;
+      imgScale = 1;
+      imgPanX = 0;
+      imgPanY = 0;
+      const img = document.getElementById('v-modal-img');
+      if (!img) return;
+      img.src = src;
+      updateImgTransform(false);
       const modal = document.getElementById('v-modal');
-      if (modal) modal.style.display = 'none'; 
+      if (modal) modal.style.display = 'flex';
+      const hint = document.querySelector('.zoom-hint');
+      if (hint) {
+        hint.classList.remove('hidden');
+        setTimeout(() => hint.classList.add('hidden'), 2500);
+      }
     }
+
+    function rotateImg(e) {
+      e.stopPropagation();
+      currentRotation += 90;
+      updateImgTransform(true);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('v-modal');
+      if (modal) modal.style.display = 'none';
+      imgScale = 1; imgPanX = 0; imgPanY = 0;
+    }
+
+    async function downloadCurrentImage(e) {
+      if (e) e.stopPropagation();
+      const img = document.getElementById('v-modal-img');
+      const btn = document.getElementById('downloadImgBtn');
+      if (!img || !img.src) return;
+
+      const originalHTML = btn ? btn.innerHTML : '';
+      if (btn) { btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Descargando...'; btn.disabled = true; }
+
+      const fileName = suggestFileName(img.src);
+
+      try {
+        // Intento 1: traer el archivo y forzar la descarga real (funciona
+        // si el servidor de la imagen permite CORS).
+        const resp = await fetch(img.src, { mode: 'cors' });
+        if (!resp.ok) throw new Error('Respuesta no OK: ' + resp.status);
+        const blob = await resp.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+      } catch (err) {
+        console.warn('Descarga directa por fetch falló (probablemente CORS), usando enlace de respaldo.', err);
+        // Intento 2 (respaldo): enlace directo. Si el servidor de la imagen
+        // no permite forzar la descarga, el navegador puede abrirla en una
+        // pestaña nueva en lugar de descargarla; sigue siendo mejor que nada.
+        const a = document.createElement('a');
+        a.href = img.src;
+        a.download = fileName;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } finally {
+        if (btn) { btn.innerHTML = originalHTML; btn.disabled = false; }
+      }
+    }
+
+    function suggestFileName(url) {
+      try {
+        const clean = url.split('?')[0];
+        const parts = clean.split('/');
+        let name = decodeURIComponent(parts[parts.length - 1] || 'documento');
+        if (!/\.[a-zA-Z0-9]{2,4}$/.test(name)) name += '.jpg';
+        return name;
+      } catch (e) {
+        return 'documento.jpg';
+      }
+    }
+
+    // ---- Gestos: pellizco (pinch), rueda del mouse y doble toque ----
+    (function initImageZoomGestures() {
+      const img = document.getElementById('v-modal-img');
+      if (!img) return;
+
+      let pinchStartDist = 0;
+      let pinchStartScale = 1;
+      let isPanning = false;
+      let panStartX = 0, panStartY = 0;
+      let panOriginX = 0, panOriginY = 0;
+      let lastTapTime = 0;
+
+      function dist(t1, t2) {
+        return Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+      }
+
+      function toggleDoubleTapZoom() {
+        if (imgScale > 1.01) {
+          imgScale = 1; imgPanX = 0; imgPanY = 0;
+        } else {
+          imgScale = ZOOM_DOUBLE_TAP;
+        }
+        updateImgTransform(true);
+      }
+
+      img.addEventListener('dblclick', function (e) {
+        e.stopPropagation();
+        toggleDoubleTapZoom();
+      });
+
+      img.addEventListener('touchstart', function (e) {
+        e.stopPropagation();
+        if (e.touches.length === 2) {
+          pinchStartDist = dist(e.touches[0], e.touches[1]);
+          pinchStartScale = imgScale;
+          isPanning = false;
+        } else if (e.touches.length === 1) {
+          const now = Date.now();
+          if (now - lastTapTime < 300) {
+            toggleDoubleTapZoom();
+          }
+          lastTapTime = now;
+
+          if (imgScale > 1.01) {
+            isPanning = true;
+            panStartX = e.touches[0].clientX;
+            panStartY = e.touches[0].clientY;
+            panOriginX = imgPanX;
+            panOriginY = imgPanY;
+          }
+        }
+      }, { passive: true });
+
+      img.addEventListener('touchmove', function (e) {
+        e.stopPropagation();
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const newDist = dist(e.touches[0], e.touches[1]);
+          if (pinchStartDist > 0) {
+            const ratio = newDist / pinchStartDist;
+            imgScale = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, pinchStartScale * ratio));
+            if (imgScale <= 1.01) { imgPanX = 0; imgPanY = 0; }
+            updateImgTransform(false);
+          }
+        } else if (e.touches.length === 1 && isPanning) {
+          e.preventDefault();
+          imgPanX = panOriginX + (e.touches[0].clientX - panStartX);
+          imgPanY = panOriginY + (e.touches[0].clientY - panStartY);
+          clampPan();
+          updateImgTransform(false);
+        }
+      }, { passive: false });
+
+      img.addEventListener('touchend', function (e) {
+        e.stopPropagation();
+        isPanning = false;
+        pinchStartDist = 0;
+      }, { passive: true });
+
+      // Rueda del mouse en escritorio: zoom con Ctrl o simplemente al pasar
+      // la rueda sobre la imagen, para no interferir con el scroll de la página.
+      img.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        const delta = e.deltaY < 0 ? 0.2 : -0.2;
+        imgScale = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, imgScale + delta));
+        if (imgScale <= 1.01) { imgPanX = 0; imgPanY = 0; }
+        clampPan();
+        updateImgTransform(false);
+      }, { passive: false });
+
+      // Arrastrar con mouse cuando está ampliada (desktop)
+      img.addEventListener('mousedown', function (e) {
+        if (imgScale <= 1.01) return;
+        e.preventDefault();
+        e.stopPropagation();
+        isPanning = true;
+        img.classList.add('panning');
+        panStartX = e.clientX;
+        panStartY = e.clientY;
+        panOriginX = imgPanX;
+        panOriginY = imgPanY;
+      });
+
+      window.addEventListener('mousemove', function (e) {
+        if (!isPanning || imgScale <= 1.01) return;
+        imgPanX = panOriginX + (e.clientX - panStartX);
+        imgPanY = panOriginY + (e.clientY - panStartY);
+        clampPan();
+        updateImgTransform(false);
+      });
+
+      window.addEventListener('mouseup', function () {
+        isPanning = false;
+        img.classList.remove('panning');
+      });
+    })();
+
 
     // ==========================================
     // CAPA DE SEGURIDAD INTEGRAL Y MENÚS
@@ -687,6 +937,7 @@
             <span class="news-title"><i class="bi ${item.icon || 'bi-stars'}"></i> ${item.title}</span>
             <span class="news-date">${formatNewsDate(item.date)}</span>
           </div>
+          ${item.version ? `<span class="news-version">${item.version}</span>` : ''}
           <div class="news-desc">${item.desc}</div>
         </div>`).join('');
     }
@@ -827,4 +1078,3 @@
     }
 
     init();
-    checkUnseenNews();
