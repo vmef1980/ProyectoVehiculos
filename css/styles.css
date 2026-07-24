@@ -530,6 +530,17 @@
       gap: 8px;
     }
     .news-title i { color: var(--brand-color); font-size: 0.95rem; }
+    .news-version {
+      display: inline-block;
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--brand-color);
+      background: rgba(var(--brand-color-rgb), 0.12);
+      border-radius: 20px;
+      padding: 2px 8px;
+      margin-bottom: 0.4rem;
+      letter-spacing: 0.5px;
+    }
     .news-date {
       font-size: 0.68rem;
       font-weight: 700;
@@ -706,24 +717,55 @@
     .modal { 
       position: fixed; inset: 0; background: #000000; 
       display: none; z-index: 9999; flex-direction: column; 
-      justify-content: center; align-items: center;
+      justify-content: center; align-items: center; overflow: hidden;
     }
     #v-modal-img { 
       max-width: 100%; max-height: 80vh; width: auto; height: auto;
       object-fit: contain;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      user-select: contain;
-      -webkit-user-select: contain;
+      transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-user-drag: none;
+      touch-action: none;
+      cursor: zoom-in;
     }
+    #v-modal-img.zoomed {
+      cursor: grab;
+      transition: none;
+    }
+    #v-modal-img.panning {
+      cursor: grabbing;
+      transition: none;
+    }
+
+    .zoom-hint {
+      position: absolute;
+      top: calc(1rem + env(safe-area-inset-top));
+      left: 0; right: 0;
+      text-align: center;
+      color: rgba(255,255,255,0.55);
+      font-size: 0.75rem;
+      font-weight: 600;
+      pointer-events: none;
+      z-index: 1;
+      transition: opacity 0.3s ease;
+    }
+    .zoom-hint.hidden { opacity: 0; }
     
     .modal-controls { 
       position: absolute; bottom: calc(2rem + env(safe-area-inset-bottom)); 
       left: 0; right: 0; display: flex; flex-direction: column; gap: 10px; align-items: center; 
     }
+    .modal-controls-row {
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: center;
+    }
     .rotate-btn { 
       background: #ffffff; color: #000000; border: none; padding: 1rem 2rem; 
       border-radius: 50px; font-weight: 700; cursor: pointer; display: flex; 
       align-items: center; gap: 8px; font-size: 0.9rem;
+    }
+    .rotate-btn:disabled {
+      opacity: 0.6; cursor: default;
     }
     .close-v { 
       position: absolute; top: calc(1rem + env(safe-area-inset-top)); right: 1.2rem; 
